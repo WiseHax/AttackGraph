@@ -1,0 +1,1 @@
+# AttackGraph domain layer

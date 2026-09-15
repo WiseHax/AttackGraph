@@ -1,0 +1,40 @@
+# Environments
+.env
+.venv/
+venv/
+env/
+
+# Python caches and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+
+# Coverage and test artifacts
+.coverage
+htmlcov/
+coverage.xml
+
+# Local databases
+*.sqlite
+*.db
+*.sqlite3
+
+# Local secrets & credentials
+credentials
+private_keys/
+*.pem
+*.key
+
+# IDE and temporary files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Docker local overrides
+docker-compose.override.yml

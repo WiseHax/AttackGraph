@@ -1,0 +1,1 @@
+# AttackGraph schemas (Pydantic validation)
