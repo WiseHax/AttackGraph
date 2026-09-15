@@ -34,7 +34,10 @@ class RiskEngine:
     """
 
     @staticmethod
-    def calculate(risk_input: RiskInput) -> RiskResult:
+    def calculate(risk_input: RiskInput, formula_version: str = "risk-v1") -> RiskResult:
+        if formula_version not in ("risk-v1", "risk-v2"):
+            raise ValueError(f"Unsupported formula_version: {formula_version}")
+            
         # Target Criticality
         tc_val = CRITICALITY_MAP.get(risk_input.target_criticality, 0.1)
         tc_desc = f"Target Criticality: {risk_input.target_criticality or 'None'}"
@@ -57,19 +60,43 @@ class RiskEngine:
             description=f"Path Enablement (Geometric Mean of {len(edge_vals)} edges)"
         )
         
-        # Confidence (Minimum, Weakest Link)
-        conf_vals = []
-        for conf, tier in zip(risk_input.edge_confidences, risk_input.edge_truth_tiers):
-            c_val = CONFIDENCE_MAP.get(conf, 0.2)
-            if tier == "INFERRED":
-                c_val *= 0.8
-            conf_vals.append(c_val)
+        # Confidence
+        if formula_version == "risk-v1":
+            conf_vals = []
+            for conf, tier in zip(risk_input.edge_confidences, risk_input.edge_truth_tiers):
+                c_val = CONFIDENCE_MAP.get(conf, 0.2)
+                if tier == "INFERRED":
+                    c_val *= 0.8
+                conf_vals.append(c_val)
+                
+            if conf_vals:
+                min_conf = min(conf_vals)
+            else:
+                min_conf = 1.0
+            conf_desc = "Minimum Path Confidence"
             
-        if conf_vals:
-            min_conf = min(conf_vals)
-        else:
-            min_conf = 1.0  # 0-hop path has perfect confidence
-        conf_factor = RiskFactor(value=min_conf, description="Minimum Path Confidence")
+        elif formula_version == "risk-v2":
+            source_groups: dict[str, list[float]] = {}
+            for conf, tier, src in zip(risk_input.edge_confidences, risk_input.edge_truth_tiers, risk_input.edge_sources):
+                c_val = CONFIDENCE_MAP.get(conf, 0.2)
+                if tier == "INFERRED":
+                    c_val *= 0.8
+                
+                if src not in source_groups:
+                    source_groups[src] = []
+                source_groups[src].append(c_val)
+                
+            if source_groups:
+                # Joint Source Probability (Source-Grouped Multiplicative Confidence)
+                source_confidences = []
+                for src, vals in source_groups.items():
+                    source_confidences.append(min(vals))
+                min_conf = math.prod(source_confidences)
+            else:
+                min_conf = 1.0
+            conf_desc = "Source-Grouped Multiplicative Confidence"
+            
+        conf_factor = RiskFactor(value=min_conf, description=conf_desc)
         
         # Control Dampening (Fixed 1.0 for Phase 4 MVP)
         control_factor = RiskFactor(
@@ -111,6 +138,7 @@ class RiskEngine:
             cat = "CRITICAL"
             
         return RiskResult(
+            formula_version=formula_version,
             path=risk_input.path,
             finding_ids=finding_ids,
             numeric_risk=final_risk,

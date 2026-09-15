@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.domain.models import Entity, Relationship
+from app.domain.models import Entity, Relationship, RelationshipEvidence
 
 
 async def get_all_entities_for_projection(session: AsyncSession) -> Sequence[Entity]:
@@ -26,7 +26,7 @@ async def get_all_relationships_for_projection(session: AsyncSession) -> Sequenc
     """Fetch all relationships and eager-load their evidence references."""
     stmt = (
         select(Relationship)
-        .options(selectinload(Relationship.evidence_links))
+        .options(selectinload(Relationship.evidence_links).joinedload(RelationshipEvidence.evidence))
     )
     result = await session.execute(stmt)
     return result.scalars().all()

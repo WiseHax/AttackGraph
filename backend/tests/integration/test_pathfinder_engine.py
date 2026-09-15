@@ -4,7 +4,7 @@ import pytest
 
 from app.graph.builder import GraphBuilder
 from app.graph.networkx import NetworkXStore
-from app.graph.pathfinder import Pathfinder
+from app.graph.pathfinder import TraversalEngine
 from scripts.load_synthetic_data import load_synthetic_topology
 
 
@@ -27,7 +27,7 @@ async def test_end_to_end_pathfinding(pg_session):
     initial_edges = store.graph.number_of_edges()
 
     # 4. Run Pathfinding
-    pathfinder = Pathfinder(store)
+    pathfinder = TraversalEngine(store)
     
     # Find path from admin -> jump_host -> app_prod -> customer_data
     source_id = entities["admin"]

@@ -85,7 +85,10 @@ class NetworkXStore(GraphStore):
         # For a more optimized lookup by edge ID, we'd maintain a separate dict map.
         for u, v, key, data in self.graph.edges(keys=True, data=True):
             if key == relationship_id:
-                return dict(data)
+                result = dict(data)
+                result["source_id"] = u
+                result["target_id"] = v
+                return result
         return None
 
     def get_neighbors(self, entity_id: uuid.UUID) -> list[uuid.UUID]:
@@ -105,3 +108,20 @@ class NetworkXStore(GraphStore):
                 edge_info["relationship_id"] = key
                 edges.append(edge_info)
         return edges
+
+    def clone(self) -> "NetworkXStore":
+        """Create an independent unlinked clone of the graph projection."""
+        cloned_store = NetworkXStore()
+        # nx.MultiDiGraph.copy() creates a shallow copy, which is perfectly safe
+        # since we only add/remove nodes and edges, not modify internal dicts.
+        cloned_store.graph = self.graph.copy()
+        return cloned_store
+
+    def remove_relationship(self, relationship_id: uuid.UUID) -> bool:
+        """Remove a specific relationship (edge) by its UUID."""
+        # Find the specific edge (u, v, key)
+        for u, v, key, data in self.graph.edges(keys=True, data=True):
+            if key == relationship_id:
+                self.graph.remove_edge(u, v, key=key)
+                return True
+        return False

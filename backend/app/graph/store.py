@@ -68,3 +68,15 @@ class GraphStore(Protocol):
         - relationship_type: The string type of the relationship
         """
         ...
+
+    def clone(self) -> "GraphStore":
+        """Create an independent unlinked clone of the graph projection."""
+        ...
+
+    def remove_relationship(self, relationship_id: uuid.UUID) -> bool:
+        """Remove a specific relationship (edge) by its UUID.
+        
+        Must preserve parallel edges.
+        Returns True if removed, False if not found.
+        """
+        ...

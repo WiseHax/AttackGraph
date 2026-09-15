@@ -35,8 +35,19 @@ class GraphBuilder:
         # Project relationships as edges
         relationships = await get_all_relationships_for_projection(self.session)
         for rel in relationships:
-            # Extract evidence IDs from relationship.evidence_links
+            # Extract evidence IDs and raw evidence objects
             evidence_ids = [link.evidence_id for link in rel.evidence_links]
+            raw_evidence = []
+            for link in rel.evidence_links:
+                ev = link.evidence
+                raw_evidence.append({
+                    "id": ev.id,
+                    "source": ev.source,
+                    "source_type": ev.source_type,
+                    "collected_at": ev.collected_at,
+                    "freshness_ttl_seconds": ev.freshness_ttl_seconds,
+                    "confidence": ev.confidence
+                })
             
             self.store.add_relationship(
                 relationship_id=rel.id,
@@ -46,4 +57,5 @@ class GraphBuilder:
                 truth_tier=rel.truth_tier,
                 confidence=rel.confidence,
                 evidence_ids=evidence_ids,
+                raw_evidence=raw_evidence,
             )

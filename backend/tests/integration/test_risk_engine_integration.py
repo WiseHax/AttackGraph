@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 from app.domain.models import Finding
 from app.graph.builder import GraphBuilder
 from app.graph.networkx import NetworkXStore
-from app.graph.pathfinder import Pathfinder
+from app.graph.pathfinder import TraversalEngine
 from app.analytics.risk_engine import RiskEngine
 from app.schemas.analytics import RiskInput, FindingRiskInput
 from scripts.load_synthetic_data import load_synthetic_topology
@@ -32,7 +32,7 @@ async def test_postgres_risk_pipeline(pg_session):
     initial_edges = list(store.graph.edges(keys=True, data=True))
     
     # 3. Pathfinding (Phase 3)
-    pathfinder = Pathfinder(store)
+    pathfinder = TraversalEngine(store)
     source_id = entities["admin"]
     target_id = entities["customer_data"]
     
@@ -49,12 +49,21 @@ async def test_postgres_risk_pipeline(pg_session):
     edge_types = []
     edge_confs = []
     edge_tiers = []
+    edge_sources = []
+    
+    from app.analytics.decay import resolve_edge_evidence
     
     for edge_id in attack_path.edge_ids:
         edge_data = store.get_relationship(edge_id)
+        
+        raw_ev = edge_data.get("raw_evidence")
+        truth_tier = edge_data["truth_tier"]
+        resolved_conf, resolved_source = resolve_edge_evidence(raw_ev, str(edge_id), truth_tier)
+        
         edge_types.append(edge_data["relationship_type"])
-        edge_confs.append(edge_data.get("confidence"))
-        edge_tiers.append(edge_data["truth_tier"])
+        edge_confs.append(resolved_conf)
+        edge_tiers.append(truth_tier)
+        edge_sources.append(resolved_source)
         
     # Fetch findings from PostgreSQL (Application Provider Layer)
     stmt = select(Finding).where(Finding.entity_id.in_(attack_path.node_ids))
@@ -77,6 +86,7 @@ async def test_postgres_risk_pipeline(pg_session):
         edge_types=edge_types,
         edge_confidences=edge_confs,
         edge_truth_tiers=edge_tiers,
+        edge_sources=edge_sources,
         findings=finding_inputs
     )
     

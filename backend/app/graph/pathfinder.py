@@ -4,10 +4,10 @@ import uuid
 from typing import Any
 
 from app.graph.store import GraphStore
-from app.schemas.analytics import AttackPath, PathfindingResult
+from app.schemas.analytics import AttackPath, PathfindingResult, TraversalPolicy
 
 
-class Pathfinder:
+class TraversalEngine:
     """Analytical engine for discovering paths within the GraphStore.
     
     This engine is read-only. It performs bounded, deterministic traversal
@@ -22,6 +22,7 @@ class Pathfinder:
         self,
         source_id: uuid.UUID,
         target_id: uuid.UUID,
+        policy: TraversalPolicy | None = None,
         max_hops: int = 6,
         max_paths: int = 100,
         allowed_types: set[str] | list[str] | None = None,
@@ -31,13 +32,17 @@ class Pathfinder:
         Args:
             source_id: Starting entity UUID
             target_id: Destination entity UUID
-            max_hops: Maximum number of edges in any path
+            policy: TraversalPolicy for attacker-effort bounds. Overrides max_hops if provided.
+            max_hops: Maximum computational depth if policy is not provided
             max_paths: Maximum number of valid paths to discover before halting
             allowed_types: If provided, only traverse these relationship types
             
         Returns:
             PathfindingResult containing discovered paths.
         """
+        if policy is not None:
+            max_hops = policy.max_hops
+            
         if max_hops < 0:
             raise ValueError("max_hops must be >= 0")
         if max_paths < 1:
@@ -57,19 +62,24 @@ class Pathfinder:
                 source_id=source_id,
                 target_id=target_id,
                 paths=discovered_paths,
+                policy=policy,
                 max_hops=max_hops,
                 max_paths=max_paths,
                 paths_found=1
             )
         
-        # DFS stack contains: (current_node_id, current_node_path, current_edge_path, visited_nodes)
-        stack: list[tuple[uuid.UUID, list[uuid.UUID], list[uuid.UUID], set[uuid.UUID]]] = [
-            (source_id, [source_id], [], {source_id})
+        # DFS stack contains: (current_node_id, current_node_path, current_edge_path, visited_nodes, accumulated_cost)
+        stack: list[tuple[uuid.UUID, list[uuid.UUID], list[uuid.UUID], set[uuid.UUID], int]] = [
+            (source_id, [source_id], [], {source_id}, 0)
         ]
         
         while stack and len(discovered_paths) < max_paths:
-            current_node, node_path, edge_path, visited = stack.pop()
+            current_node, node_path, edge_path, visited, accumulated_cost = stack.pop()
             
+            # Stop expanding if we exceed traversal_budget (Semantic bound)
+            if policy is not None and accumulated_cost > policy.traversal_budget:
+                continue
+                
             # If we reached the target, save the path
             if current_node == target_id and len(node_path) > 1:
                 discovered_paths.append(
@@ -77,7 +87,7 @@ class Pathfinder:
                 )
                 continue
                 
-            # Stop expanding if we reached max_hops
+            # Stop expanding if we reached max_hops (Computational bound)
             if len(edge_path) >= max_hops:
                 continue
                 
@@ -92,8 +102,6 @@ class Pathfinder:
             edges = [e for e in edges if e["target_id"] not in visited]
             
             # Sort edges for deterministic traversal: relationship_type, target_id, relationship_id
-            # We reverse the sort before extending the stack so that the first item popped
-            # is the one that would appear first in the sorted order (DFS left-to-right).
             edges.sort(
                 key=lambda e: (
                     e["relationship_type"],
@@ -104,6 +112,15 @@ class Pathfinder:
             )
             
             for edge in edges:
+                edge_type = edge["relationship_type"]
+                
+                # Check negative edge costs explicitly
+                cost = 1 # default
+                if policy is not None:
+                    cost = policy.edge_costs.get(edge_type, 1)
+                    if cost < 0:
+                        raise ValueError(f"Edge cost for {edge_type} cannot be negative.")
+                
                 next_node = edge["target_id"]
                 new_visited = set(visited)
                 new_visited.add(next_node)
@@ -114,12 +131,13 @@ class Pathfinder:
                 new_edge_path = list(edge_path)
                 new_edge_path.append(edge["relationship_id"])
                 
-                stack.append((next_node, new_node_path, new_edge_path, new_visited))
+                stack.append((next_node, new_node_path, new_edge_path, new_visited, accumulated_cost + cost))
                 
         return PathfindingResult(
             source_id=source_id,
             target_id=target_id,
             paths=discovered_paths,
+            policy=policy,
             max_hops=max_hops,
             max_paths=max_paths,
             paths_found=len(discovered_paths)

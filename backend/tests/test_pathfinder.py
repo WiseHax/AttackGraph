@@ -4,7 +4,7 @@ import uuid
 import pytest
 
 from app.graph.networkx import NetworkXStore
-from app.graph.pathfinder import Pathfinder
+from app.graph.pathfinder import TraversalEngine
 
 
 @pytest.fixture
@@ -14,7 +14,7 @@ def store():
 
 @pytest.fixture
 def pathfinder(store):
-    return Pathfinder(store)
+    return TraversalEngine(store)
 
 
 def test_basic_multihop_path(store, pathfinder):

@@ -19,6 +19,7 @@ def _build_input(
     edge_types=None, 
     confs=None, 
     tiers=None, 
+    sources=None,
     findings=None
 ) -> RiskInput:
     if edge_types is None:
@@ -27,6 +28,8 @@ def _build_input(
         confs = ["HIGH"]
     if tiers is None:
         tiers = ["OBSERVED"]
+    if sources is None:
+        sources = ["test-source"] * len(edge_types)
         
     path = _dummy_path(edge_count=len(edge_types))
     
@@ -45,6 +48,7 @@ def _build_input(
         edge_types=edge_types,
         edge_confidences=confs,
         edge_truth_tiers=tiers,
+        edge_sources=sources,
         findings=findings
     )
 
