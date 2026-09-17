@@ -47,6 +47,8 @@ class PathfindingResult(BaseModel):
     max_hops: int
     max_paths: int
     paths_found: int
+    is_saturated: bool = False
+    termination_reason: Literal["EXHAUSTED", "MAX_PATHS_REACHED"] | None = None
     
     model_config = ConfigDict(frozen=True)
 
@@ -142,6 +144,8 @@ class EnvironmentRiskRanking(BaseModel):
     """The complete ranked result of evaluating multiple remediation candidates."""
     aggregation_policy_version: str = "env-risk-v1"
     ranking_policy_version: str = "remediation-ranking-v1"
+    analysis_policy_fingerprint: str | None = None
+    is_saturated: bool = False
     
     baseline_environment_risk: float
     baseline_path_count: int
