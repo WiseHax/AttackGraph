@@ -5,3 +5,4 @@ markers = [
     "integration: PostgreSQL integration tests (require TEST_DATABASE_URL)",
 ]
 testpaths = ["tests"]
+cache_dir = "/tmp/.pytest_cache"
