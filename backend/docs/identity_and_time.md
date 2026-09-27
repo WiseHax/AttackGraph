@@ -28,6 +28,12 @@ Analytical properties such as computed risk, evidence confidence, or temporal de
 
 
 
+**Ordering of Path-ID Lists:**
+
+Wherever a result carries a list of canonical path IDs derived from a set (e.g. `removed_path_ids` / `remaining_path_ids` in `CounterfactualRemediationResult`), the list is emitted in ascending lexicographic order of the path ID. The order is part of the result (ANA-3): serialized output is byte-identical across processes regardless of `PYTHONHASHSEED`.
+
+
+
 ## 2. Evidence Supersession Contract
 
 

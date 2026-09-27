@@ -130,7 +130,13 @@ def generate_canonical_path_id(path: AttackPath) -> str:
 
 
 class CounterfactualRemediationResult(BaseModel):
-    """The result of evaluating a single relationship removal."""
+    """The result of evaluating a single relationship removal.
+
+    removed_path_ids and remaining_path_ids are canonical path IDs
+    (see generate_canonical_path_id) in ascending lexicographic order.
+    This total order is part of the result (ANA-3) so that serialized
+    output is byte-identical across processes.
+    """
     target_relationship_id: uuid.UUID
     target_source_id: uuid.UUID
     target_target_id: uuid.UUID

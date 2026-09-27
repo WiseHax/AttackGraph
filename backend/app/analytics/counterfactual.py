@@ -173,8 +173,10 @@ class CounterfactualEngine:
             cf_env_risk = EnvironmentRiskAggregator.calculate(cf_risks)
 
             # Calculate metrics
-            removed = list(baseline_path_ids - cf_path_ids)
-            remaining = list(baseline_path_ids.intersection(cf_path_ids))
+            # ANA-3: set iteration order depends on the per-process hash seed,
+            # so path-ID lists are emitted in ascending canonical path-ID order.
+            removed = sorted(baseline_path_ids - cf_path_ids)
+            remaining = sorted(baseline_path_ids.intersection(cf_path_ids))
 
             res = CounterfactualRemediationResult(
                 target_relationship_id=candidate_id,
