@@ -51,7 +51,18 @@ class GraphStore(Protocol):
         ...
 
     def get_relationship(self, relationship_id: uuid.UUID) -> dict[str, Any] | None:
-        """Retrieve edge attributes for a given relationship ID."""
+        """Retrieve edge attributes for a given relationship ID.
+
+        Returns None if the relationship is not in the projection. Otherwise
+        the dictionary must contain at least:
+        - source_id: The UUID of the source entity
+        - target_id: The UUID of the target entity
+        - relationship_type: The string type of the relationship
+        - truth_tier: 'OBSERVED' or 'INFERRED'
+
+        CounterfactualEngine relies on source_id and target_id to identify the
+        removed relationship and fails closed if either is missing.
+        """
         ...
 
     def get_neighbors(self, entity_id: uuid.UUID) -> list[uuid.UUID]:

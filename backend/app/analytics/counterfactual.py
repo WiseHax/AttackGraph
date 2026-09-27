@@ -1,7 +1,8 @@
 """Counterfactual Analysis Engine for Remediation Ranking."""
 
 import uuid
-from typing import Iterable, Any
+from datetime import datetime
+from typing import Iterable
 
 from app.graph.store import GraphStore
 from app.graph.pathfinder import TraversalEngine
@@ -42,7 +43,7 @@ class CounterfactualEngine:
         self,
         path: AttackPath,
         current_store: GraphStore,
-        evaluation_time: Any
+        evaluation_time: datetime
     ) -> RiskInput:
         """Build a RiskInput from an AttackPath by fetching attributes from the store."""
         from app.analytics.decay import resolve_edge_evidence
@@ -97,7 +98,7 @@ class CounterfactualEngine:
         source_id: uuid.UUID,
         target_id: uuid.UUID,
         candidate_relationship_ids: Iterable[uuid.UUID],
-        evaluation_time: Any,
+        evaluation_time: datetime,
         max_hops: int = 6,
         max_paths: int = 100,
         allowed_types: set[str] | list[str] | None = None,
@@ -108,6 +109,7 @@ class CounterfactualEngine:
             source_id: The attack origin entity.
             target_id: The attack destination entity.
             candidate_relationship_ids: Relationships to evaluate for removal.
+            evaluation_time: Injected reference time for evidence decay (ANA-3).
             max_hops: Bound for Pathfinder.
             max_paths: Bound for Pathfinder.
             allowed_types: Bound for Pathfinder.
@@ -145,9 +147,18 @@ class CounterfactualEngine:
             if edge_data.get("truth_tier") == "ANALYTICAL":
                 raise ValueError(f"Candidate {candidate_id} is ANALYTICAL and cannot be remediated")
 
+            # Fail closed: the result must name the real endpoints of the
+            # removed relationship, never a placeholder identity.
+            for endpoint_key in ("source_id", "target_id"):
+                if edge_data.get(endpoint_key) is None:
+                    raise ValueError(
+                        f"Candidate {candidate_id} is missing '{endpoint_key}' in GraphStore relationship data"
+                    )
+
             # Clone and Mutate
             cloned_store = self.store.clone()
-            cloned_store.remove_relationship(candidate_id)
+            if not cloned_store.remove_relationship(candidate_id):
+                raise ValueError(f"Candidate {candidate_id} could not be removed from the cloned GraphStore")
 
             # Recompute Paths
             cf_pathfinder = TraversalEngine(cloned_store)
@@ -161,11 +172,8 @@ class CounterfactualEngine:
             for p in cf_result.paths:
                 path_id = generate_canonical_path_id(p)
                 cf_path_ids.add(path_id)
-                # Ensure the subset invariant (unless max_paths reveals a hidden path,
-                # but conceptually the new paths were still "in the graph" originally.
-                # However, our strict invariant requirement says counterfactual paths must
-                # exist in baseline paths for the identical config. If max_paths is hit,
-                # a new path might appear. Wait, if it does, it's valid.)
+                # ANA-7: the counterfactual path set is a subset of the baseline
+                # path set only when baseline enumeration is not saturated.
                 r_input = self._build_risk_input(p, cloned_store, evaluation_time)
                 r_result = RiskEngine.calculate(r_input)
                 cf_risks.append(r_result.numeric_risk)
@@ -180,8 +188,8 @@ class CounterfactualEngine:
 
             res = CounterfactualRemediationResult(
                 target_relationship_id=candidate_id,
-                target_source_id=edge_data["source_id"] if "source_id" in edge_data else uuid.UUID(int=0), # Need to fix source_id in edge_data
-                target_target_id=edge_data["target_id"] if "target_id" in edge_data else uuid.UUID(int=0),
+                target_source_id=edge_data["source_id"],
+                target_target_id=edge_data["target_id"],
                 target_relationship_type=edge_data["relationship_type"],
                 baseline_environment_risk=baseline_env_risk,
                 counterfactual_environment_risk=cf_env_risk,
