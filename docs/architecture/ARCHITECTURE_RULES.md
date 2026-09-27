@@ -143,6 +143,11 @@ cannot be fingerprinted, versioned, or audited.
 Versioned analytical artefacts currently in the system include the risk formula versions and
 the environment risk aggregation version (`env-risk-v1`).
 
+Clarification (C3): constants that define a **sealed formula version** (e.g. the `risk-v1`
+weight tables, fallbacks, INFERRED multiplier and category thresholds) are versioned data by
+virtue of that version identifier; they are fingerprinted through it and are not runtime
+policy knobs. Tunable parameters live in `AnalysisPolicyV2`. See ANA-5a.
+
 ---
 
 ## 6. Identity rules [CURRENT]
@@ -298,7 +303,7 @@ frontend, or authentication layer exists. Do not assume one. Do not add one.
 | ARCH-10 | No graph-library access above the projection layer |
 | ARCH-11 | No policy inside GraphStore |
 | ARCH-12 | Two distinct traversal bounds |
-| ARCH-13 | Policy is versioned data |
+| ARCH-13 | Policy is versioned data; sealed formula constants versioned via formula id |
 | ARCH-14 | Stable canonical identity |
 | ARCH-15 | Parallel-edge identity preserved |
 | ARCH-16 | Path identity hashes semantics |

@@ -85,6 +85,32 @@ The fingerprint identifies the complete analytical configuration: formula versio
 aggregation version, both traversal bounds, enumeration limits, cost and weight tables, and
 decay parameters. If a value can change a result, it belongs in the fingerprint.
 
+**ANA-5a — A formula version identifier denotes its complete sealed constant set.** [CURRENT]
+Weight and cost tables that belong to a sealed formula enter the fingerprint *through the
+formula version identifier*, not as tunable policy values. The policy must never be able to
+describe a constant that the computation does not read.
+
+- `risk-v1` denotes: the criticality, exposure, edge enablement, confidence and finding
+  amplification tables; the unknown-key fallbacks (criticality 0.1, exposure 0.1, edge
+  enablement 0.4, confidence 0.2, finding amplification 0.0); the INFERRED confidence
+  multiplier 0.8; the category thresholds 0.25 / 0.50 / 0.75; and control dampening 1.0.
+- `decay-policy-v1` denotes the decay and evidence-resolution rules: one-tier confidence
+  downgrade on strictly stale evidence over tiers UNKNOWN < LOW < MEDIUM < HIGH; latest
+  `collected_at` wins, ties resolve to the lower confidence; INFERRED edges and edges without
+  evidence resolve to UNKNOWN.
+- `AnalysisPolicyV2` (`analysis-policy-v2`) contains **only** genuinely tunable parameters:
+  `max_hops`, `traversal_budget`, `max_paths`, `allowed_edge_types`, `edge_costs`, and the
+  version selectors `traversal-policy-v1`, `risk-v1`, `env-risk-v1`, `decay-policy-v1`. It
+  rejects unknown fields, so a sealed constant cannot be overridden, and it is canonicalised
+  so that semantically equivalent policies share one fingerprint.
+- Legacy `AnalysisPolicy` (`analysis-policy-v1`) is retained unchanged for compatibility. It
+  is **legacy**: its tables are fingerprinted but not consumed by the risk engine, so it
+  **cannot authorise persistence** of analytical results. Only `AnalysisPolicyV2` can.
+- v1 and v2 policies are **never comparable** (ANA-6); comparison between them is refused.
+
+The sealed constants are pinned by a drift-guard test; changing any of them is a new formula
+version (ANA-4), never an edit.
+
 **ANA-6 — Results with differing fingerprints are not comparable.** (ARCH-20.)
 
 A consequence agents routinely miss: a configuration change produces a risk delta that is
@@ -271,6 +297,7 @@ easier. See `TESTING_AND_VERIFICATION.md` §7.
 | ANA-3 | Determinism, injected time, total ordering |
 | ANA-4 | Version-additive semantics; bounded coexistence; v1 frozen |
 | ANA-5/6 | Fingerprints; comparability |
+| ANA-5a | Formula version = sealed constant set; V2 policy holds only tunables; v1 legacy |
 | ANA-7 | Saturation reported and propagated |
 | ANA-8 | Bound semantics respected |
 | ANA-9/10/11 | Confidence discounts; decay analytical; source-aware handling |
