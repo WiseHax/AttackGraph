@@ -10,21 +10,32 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, model_validator
 
 
+class AnalyticalScope(BaseModel):
+    """Immutable, resolved scope definition passed to the graph layer.
+
+    v1 only supports UNIVERSAL input boundary and ALL reporting selector.
+    """
+    input_boundary_kind: Literal["UNIVERSAL"]
+    reporting_selector: Literal["ALL"]
+
+    model_config = ConfigDict(frozen=True)
+
+
 class AttackPath(BaseModel):
     """Represents a single discovered path between two entities.
-    
+
     Contains ordered lists of node UUIDs and edge (relationship) UUIDs.
     For a path of N nodes, there will be N-1 edges.
     """
     node_ids: list[uuid.UUID]
     edge_ids: list[uuid.UUID]
-    
+
     model_config = ConfigDict(frozen=True)
 
 
 class TraversalPolicy(BaseModel):
     """Declarative policy for semantic attacker-effort traversal.
-    
+
     max_hops is a strict computational safety bound.
     traversal_budget is the semantic bound evaluated against accumulated edge costs.
     """
@@ -32,7 +43,7 @@ class TraversalPolicy(BaseModel):
     max_hops: int
     traversal_budget: int
     edge_costs: dict[str, int]
-    
+
     model_config = ConfigDict(frozen=True)
 
 
@@ -41,7 +52,7 @@ class PathfindingResult(BaseModel):
     source_id: uuid.UUID
     target_id: uuid.UUID
     paths: list[AttackPath]
-    
+
     # Metadata about the traversal
     policy: TraversalPolicy | None = None
     max_hops: int
@@ -49,7 +60,7 @@ class PathfindingResult(BaseModel):
     paths_found: int
     is_saturated: bool = False
     termination_reason: Literal["EXHAUSTED", "MAX_PATHS_REACHED"] | None = None
-    
+
     model_config = ConfigDict(frozen=True)
 
 
@@ -69,7 +80,7 @@ class RiskInput(BaseModel):
     edge_truth_tiers: list[str]
     edge_sources: list[str]
     findings: list[FindingRiskInput]
-    
+
     @model_validator(mode="after")
     def validate_edge_arrays(self) -> "RiskInput":
         expected_len = len(self.path.edge_ids)
@@ -109,7 +120,7 @@ import hashlib
 
 def generate_canonical_path_id(path: AttackPath) -> str:
     """Generate a cross-process stable canonical path identity using SHA-256.
-    
+
     Format: SHA256(canonical_node_ids_str + "|" + canonical_edge_ids_str)
     """
     nodes_str = ",".join(str(nid) for nid in path.node_ids)
@@ -128,14 +139,14 @@ class CounterfactualRemediationResult(BaseModel):
         "HAS_PERMISSION_ON", "MEMBER_OF", "CAN_ASSUME", "DEPENDS_ON",
         "STORES", "TRUSTS", "COMMUNICATES_WITH"
     ]
-    
+
     baseline_environment_risk: float
     counterfactual_environment_risk: float
     risk_reduction: float
-    
+
     baseline_path_count: int
     counterfactual_path_count: int
-    
+
     removed_path_ids: list[str]
     remaining_path_ids: list[str]
 
@@ -146,9 +157,9 @@ class EnvironmentRiskRanking(BaseModel):
     ranking_policy_version: str = "remediation-ranking-v1"
     analysis_policy_fingerprint: str | None = None
     is_saturated: bool = False
-    
+
     baseline_environment_risk: float
     baseline_path_count: int
-    
+
     candidates: list[CounterfactualRemediationResult]
 

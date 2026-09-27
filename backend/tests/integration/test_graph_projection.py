@@ -3,6 +3,7 @@
 import pytest
 
 from app.graph.builder import GraphBuilder
+from app.schemas.analytics import AnalyticalScope
 from app.graph.networkx import NetworkXStore
 from scripts.load_synthetic_data import load_synthetic_topology
 
@@ -19,11 +20,11 @@ async def test_end_to_end_projection(pg_session):
     # 2. Project into GraphStore
     store = NetworkXStore()
     builder = GraphBuilder(pg_session, store)
-    await builder.build()
+    await builder.build(AnalyticalScope(input_boundary_kind="UNIVERSAL", reporting_selector="ALL"))
 
     # 3. Assert Nodes
     assert store.graph.number_of_nodes() == 6
-    
+
     admin_node = store.get_entity(entities["admin"])
     assert admin_node is not None
     assert admin_node["entity_type"] == "USER"
@@ -31,7 +32,7 @@ async def test_end_to_end_projection(pg_session):
     jump_node = store.get_entity(entities["jump_host"])
     assert jump_node is not None
     assert jump_node["criticality"] == "HIGH"
-    
+
     # 4. Assert Edges
     assert store.graph.number_of_edges() == 3
 
@@ -51,6 +52,6 @@ async def test_end_to_end_projection(pg_session):
     assert len(rel_depends["evidence_ids"]) == 0
 
     # 5. Verify Determinism (Rebuilding produces the exact same graph)
-    await builder.build()
+    await builder.build(AnalyticalScope(input_boundary_kind="UNIVERSAL", reporting_selector="ALL"))
     assert store.graph.number_of_nodes() == 6
     assert store.graph.number_of_edges() == 3

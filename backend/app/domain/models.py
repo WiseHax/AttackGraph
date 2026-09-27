@@ -23,6 +23,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    CheckConstraint,
 )
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -497,3 +498,86 @@ class Snapshot(Base):
 
     def __repr__(self) -> str:
         return f"<Snapshot(id={self.id}, name={self.name!r})>"
+
+
+# ---------------------------------------------------------------------------
+# Scope (Analysis Configuration)
+# ---------------------------------------------------------------------------
+
+class Scope(Base):
+    """First-class persisted analysis configuration anchor.
+
+    Scopes are immutable analytical anchors. Once created, a scope cannot be
+    deleted (to prevent orphaning future snapshot/artifact references).
+    Only its display_name is mutable.
+    """
+
+    __tablename__ = "scopes"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True), primary_key=True, default=_new_uuid
+    )
+    display_name: Mapped[str] = mapped_column(String(256), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow
+    )
+
+    # ORM navigation
+    definitions: Mapped[list["ScopeDefinition"]] = orm_relationship(
+        "ScopeDefinition", back_populates="scope"
+    )
+
+    def __repr__(self) -> str:
+        return f"<Scope(id={self.id}, name={self.display_name!r})>"
+
+
+class ScopeDefinition(Base):
+    """Versioned, append-only definition of a Scope.
+
+    A ScopeDefinition is structurally immutable once created.
+    """
+
+    __tablename__ = "scope_definitions"
+
+    scope_id: Mapped[uuid.UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("scopes.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    version: Mapped[int] = mapped_column(primary_key=True)
+
+    input_boundary_kind: Mapped[str] = mapped_column(String(64), nullable=False)
+    reporting_selector: Mapped[str] = mapped_column(String(64), nullable=False)
+    selector_parameters: Mapped[dict | None] = mapped_column(JSON(none_as_null=True), nullable=True)
+    declared_normalization: Mapped[str | None] = mapped_column(String(64), nullable=True)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+
+    scope: Mapped["Scope"] = orm_relationship("Scope", back_populates="definitions")
+
+    __table_args__ = (
+        CheckConstraint(
+            "input_boundary_kind = 'UNIVERSAL'",
+            name="chk_v1_input_boundary"
+        ),
+        CheckConstraint(
+            "reporting_selector = 'ALL'",
+            name="chk_v1_reporting_selector"
+        ),
+        CheckConstraint(
+            "selector_parameters IS NULL",
+            name="chk_v1_selector_parameters"
+        ),
+        CheckConstraint(
+            "declared_normalization IS NULL",
+            name="chk_v1_declared_normalization"
+        ),
+    )
+
+    def __repr__(self) -> str:
+        return f"<ScopeDefinition(scope_id={self.scope_id}, version={self.version})>"

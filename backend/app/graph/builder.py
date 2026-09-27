@@ -6,6 +6,7 @@ from app.storage.graph_queries import (
     get_all_entities_for_projection,
     get_all_relationships_for_projection,
 )
+from app.schemas.analytics import AnalyticalScope
 from .store import GraphStore
 
 
@@ -16,8 +17,15 @@ class GraphBuilder:
         self.session = session
         self.store = store
 
-    async def build(self) -> None:
-        """Clear and rebuild the graph projection from the database."""
+    async def build(self, scope: AnalyticalScope) -> None:
+        """Clear and rebuild the graph projection from the database.
+
+        Args:
+            scope: The resolved analytical scope. In v1, only UNIVERSAL is supported.
+        """
+        if scope.input_boundary_kind != "UNIVERSAL":
+            raise ValueError(f"Unsupported input boundary: {scope.input_boundary_kind}")
+
         self.store.clear()
 
         # Project entities as nodes
@@ -48,7 +56,7 @@ class GraphBuilder:
                     "freshness_ttl_seconds": ev.freshness_ttl_seconds,
                     "confidence": ev.confidence
                 })
-            
+
             self.store.add_relationship(
                 relationship_id=rel.id,
                 source_id=rel.source_entity_id,

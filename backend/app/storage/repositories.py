@@ -18,6 +18,8 @@ from app.domain.models import (
     FindingEvidence,
     Relationship,
     RelationshipEvidence,
+    Scope,
+    ScopeDefinition,
 )
 
 
@@ -239,3 +241,88 @@ class AuditLogRepository:
         )
         result = await self.session.execute(stmt)
         return list(result.scalars().all())
+
+
+class ScopeRepository:
+    """CRUD operations for Scope.
+
+    Deliberately omits a delete method to enforce the lifecycle invariant:
+    Scopes cannot be deleted (protects snapshot references).
+    """
+
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def create(self, scope: Scope) -> Scope:
+        self.session.add(scope)
+        await self.session.flush()
+        return scope
+
+    async def get_by_id(self, scope_id: uuid.UUID) -> Scope | None:
+        return await self.session.get(Scope, scope_id)
+
+    async def list_all(
+        self, limit: int = 100, offset: int = 0
+    ) -> list[Scope]:
+        stmt = select(Scope).limit(limit).offset(offset)
+        result = await self.session.execute(stmt)
+        return list(result.scalars().all())
+
+
+class ScopeDefinitionRepository:
+    """CRUD operations for ScopeDefinition.
+
+    Deliberately omits update and delete methods to enforce append-only immutability.
+    """
+
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def create(self, scope_id: uuid.UUID, definition: ScopeDefinition) -> ScopeDefinition:
+        """Create a new ScopeDefinition version.
+
+        Uses SELECT FOR UPDATE on the parent Scope to ensure deterministic,
+        concurrency-safe version allocation.
+        """
+        # Lock the scope row to prevent concurrent version increments
+        stmt = select(Scope.id).where(Scope.id == scope_id).with_for_update()
+        result = await self.session.execute(stmt)
+        if not result.scalar_one_or_none():
+            raise ValueError(f"Scope {scope_id} does not exist.")
+
+        # Determine the next version
+        version_stmt = select(ScopeDefinition.version).where(
+            ScopeDefinition.scope_id == scope_id
+        ).order_by(ScopeDefinition.version.desc()).limit(1)
+
+        last_version_result = await self.session.execute(version_stmt)
+        last_version = last_version_result.scalar_one_or_none()
+
+        next_version = (last_version or 0) + 1
+
+        # Enforce application-level schema validation for v1
+        if definition.input_boundary_kind != 'UNIVERSAL':
+            raise ValueError("v1 only supports UNIVERSAL input_boundary_kind")
+        if definition.reporting_selector != 'ALL':
+            raise ValueError("v1 only supports ALL reporting_selector")
+        if definition.selector_parameters is not None:
+            raise ValueError("v1 ALL selector requires selector_parameters to be None")
+        if definition.declared_normalization is not None:
+            raise ValueError("v1 ALL selector requires declared_normalization to be None")
+
+        definition.scope_id = scope_id
+        definition.version = next_version
+
+        self.session.add(definition)
+        await self.session.flush()
+        return definition
+
+    async def get_by_id(self, scope_id: uuid.UUID, version: int) -> ScopeDefinition | None:
+        return await self.session.get(ScopeDefinition, (scope_id, version))
+
+    async def get_latest_version(self, scope_id: uuid.UUID) -> ScopeDefinition | None:
+        stmt = select(ScopeDefinition).where(
+            ScopeDefinition.scope_id == scope_id
+        ).order_by(ScopeDefinition.version.desc()).limit(1)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()

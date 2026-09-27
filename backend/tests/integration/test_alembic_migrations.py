@@ -206,7 +206,7 @@ class TestAlembicIdempotency:
         """'alembic current' should show the head revision."""
         result = _run_alembic(["current"], alembic_env)
         assert result.returncode == 0
-        assert "0001_initial" in result.stdout
+        assert "0002_scope_foundation" in result.stdout
 
 
 class TestAlembicDowngrade:

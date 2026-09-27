@@ -6,6 +6,7 @@ from sqlalchemy.orm import selectinload
 
 from app.domain.models import Finding
 from app.graph.builder import GraphBuilder
+from app.schemas.analytics import AnalyticalScope
 from app.graph.networkx import NetworkXStore
 from app.graph.pathfinder import TraversalEngine
 from app.analytics.risk_engine import RiskEngine
@@ -25,7 +26,7 @@ async def test_postgres_risk_pipeline(pg_session):
     # 2. Build Graph (Phase 2)
     store = NetworkXStore()
     builder = GraphBuilder(pg_session, store)
-    await builder.build()
+    await builder.build(AnalyticalScope(input_boundary_kind="UNIVERSAL", reporting_selector="ALL"))
 
     # Take snapshot for immutability check
     initial_nodes = list(store.graph.nodes(data=True))
