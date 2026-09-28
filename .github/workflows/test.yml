@@ -1,0 +1,73 @@
+# Runs the complete existing test suite (unit + PostgreSQL integration) on the
+# supported runtime. Repository maintenance only: it does not build or change
+# the application. Actions are pinned to full commit SHAs (SEC-15).
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    name: pytest (Python 3.12, PostgreSQL 16)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    services:
+      # Same image as docker-compose.yml. Disposable, CI-only database: trust
+      # authentication, so no password exists in the repository (SEC-4).
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: attackgraph
+          POSTGRES_DB: attackgraph_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U attackgraph -d attackgraph_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Python 3.12 matches backend/Dockerfile and the hash-locked dependency set.
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Install locked dependencies
+        run: python -m pip install --require-hashes -r requirements.lock
+
+      # The integration fixture drops and re-migrates the schema of the
+      # dedicated CI test database named here.
+      - name: Run test suite
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://attackgraph@localhost:5432/attackgraph_test
+        run: python -m pytest -rsxfE | tee pytest.log
+
+      # Integration tests skip themselves when PostgreSQL is not configured; a
+      # skip here would mean part of the suite silently did not run.
+      - name: Require that no tests were skipped
+        run: |
+          if grep -qE "[0-9]+ skipped" pytest.log; then
+            echo "::error::Tests were skipped; the integration suite did not run completely."
+            exit 1
+          fi

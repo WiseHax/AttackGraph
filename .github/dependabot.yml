@@ -29,3 +29,19 @@ updates:
     ignore:
       - dependency-name: "python"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
+  # Actions in .github/workflows are pinned to commit SHAs (SEC-15); this keeps
+  # the pins current with upstream fixes.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 2
+    commit-message:
+      prefix: "ci"
+
+# The root docker-compose.yml is deliberately not tracked: its only image,
+# postgres:16-alpine (also used as the CI service), is a floating tag that
+# already receives 16.x updates, and the only update Dependabot could propose
+# is a PostgreSQL major version, which needs a data-directory migration and is
+# a deliberate maintainer decision.
