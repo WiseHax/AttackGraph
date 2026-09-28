@@ -1,0 +1,31 @@
+name: Request a private security contact
+description: Ask for a private channel to report a vulnerability. Do NOT include any vulnerability details.
+title: "Request for private security contact"
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Stop — this issue is public.** Do not describe the vulnerability, affected
+        component, reproduction steps, configurations or any data here.
+
+        Private vulnerability reporting is not enabled for this repository. Use this form only
+        to ask the maintainer for a private channel, as described in SECURITY.md. General
+        security questions that involve no undisclosed vulnerability can use a normal issue.
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: This issue contains no vulnerability details, exploit information, credentials or real-environment data.
+          required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Your rough severity estimate (optional)
+      options:
+        - Not sure
+        - Low
+        - Medium
+        - High
+        - Critical

@@ -1,0 +1,76 @@
+name: Bug report
+description: Report incorrect behaviour, a crash, or a wrong analytical result.
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Do not report security vulnerabilities here** — follow SECURITY.md.
+        Use synthetic data only: never paste credentials or data from a real environment.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps or a synthetic fixture that reproduces the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: Include exact output, error messages or test failures (redact anything sensitive).
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Canonical model / persistence / migrations
+        - Graph projection / traversal
+        - Risk / aggregation / decay
+        - Counterfactual / remediation ranking
+        - Policy / fingerprint / comparability
+        - Scope resolution
+        - Engine identity / Docker image
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: determinism
+    attributes:
+      label: Does the problem affect determinism or reproducibility?
+      description: For example, results that differ between runs, processes or timezones.
+      options:
+        - "No"
+        - "Yes"
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Commit
+      description: Output of `git rev-parse HEAD`.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, PostgreSQL version, Docker or local.

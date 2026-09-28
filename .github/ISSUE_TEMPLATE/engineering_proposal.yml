@@ -1,0 +1,59 @@
+name: Engineering proposal
+description: Propose a change to architecture, analytical semantics, versioned formulas or governance.
+title: "proposal: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for changes that need a design decision before implementation. New analytical
+        capabilities must answer the nine declarations in
+        ANALYTICAL_INTEGRITY_RULES.md §11. Raise ambiguities; do not resolve them silently.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question answered
+      description: The defensive question this answers, in one sentence a security engineer would recognise.
+    validations:
+      required: true
+  - type: textarea
+    id: design
+    attributes:
+      label: Proposed design
+      description: Inputs (canonical data and policy values), method and assumptions, output shape and breakdown.
+    validations:
+      required: true
+  - type: textarea
+    id: layers
+    attributes:
+      label: Layers and invariants
+      description: Layers touched, dependency direction, and rule IDs engaged (ARCH-*, ANA-*, SEC-*).
+    validations:
+      required: true
+  - type: textarea
+    id: analytical_impact
+    attributes:
+      label: Analytical impact
+      description: |
+        Semantic change and new version id (if any), fingerprint contribution, saturation behaviour,
+        bound sensitivity (max_hops, traversal_budget, max_paths), and determinism.
+    validations:
+      required: true
+  - type: textarea
+    id: failure_modes
+    attributes:
+      label: Failure modes and disclosures
+      description: When could it produce a misleading answer, and which limitations must be disclosed?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints
+      options:
+        - label: I have identified whether this needs a database migration, a new dependency, or a change to a frozen formula (these need explicit maintainer approval).
+          required: true

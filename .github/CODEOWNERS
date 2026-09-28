@@ -1,0 +1,14 @@
+# Default reviewer for all changes.
+* @WiseHax
+
+# Governance, analytical semantics, security and engine identity changes need
+# explicit maintainer review (listed separately so the intent is visible).
+/AGENTS.md                              @WiseHax
+/docs/                                  @WiseHax
+/backend/app/analytics/                 @WiseHax
+/backend/alembic/                       @WiseHax
+/backend/Dockerfile                     @WiseHax
+/backend/.dockerignore                  @WiseHax
+/backend/scripts/generate_metadata.py   @WiseHax
+/backend/requirements.*                 @WiseHax
+/SECURITY.md                            @WiseHax
