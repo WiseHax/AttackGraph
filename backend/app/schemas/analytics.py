@@ -169,6 +169,11 @@ class CounterfactualRemediationResult(BaseModel):
     (see generate_canonical_path_id) in ascending lexicographic order.
     This total order is part of the result (ANA-3) so that serialized
     output is byte-identical across processes.
+
+    Saturation (ANA-7a): counterfactual_is_saturated / _termination_reason
+    describe this candidate's enumeration. rankable is False when either the
+    baseline or this candidate's enumeration saturated: a truncated path set
+    is a lower bound, so its risk reduction is not a complete measurement.
     """
     target_relationship_id: uuid.UUID
     target_source_id: uuid.UUID
@@ -188,6 +193,24 @@ class CounterfactualRemediationResult(BaseModel):
 
     removed_path_ids: list[str]
     remaining_path_ids: list[str]
+
+    counterfactual_is_saturated: bool
+    counterfactual_termination_reason: Literal["EXHAUSTED", "MAX_PATHS_REACHED"]
+    rankable: bool
+
+
+# Fixed reason codes explaining why a ranking is not persistence-authoritative.
+# Emitted in sorted order.
+NON_AUTHORITATIVE_BASELINE_SATURATED = "BASELINE_SATURATED"
+NON_AUTHORITATIVE_COUNTERFACTUAL_SATURATED = "COUNTERFACTUAL_SATURATED"
+NON_AUTHORITATIVE_NO_ANALYSIS_CONTEXT = "NO_ANALYSIS_CONTEXT"
+NON_AUTHORITATIVE_NON_CANONICAL_SCOPE = "NON_CANONICAL_SCOPE"
+NonAuthoritativeReason = Literal[
+    "BASELINE_SATURATED",
+    "COUNTERFACTUAL_SATURATED",
+    "NO_ANALYSIS_CONTEXT",
+    "NON_CANONICAL_SCOPE",
+]
 
 
 class AnalysisProvenance(BaseModel):
@@ -221,14 +244,45 @@ class AnalysisProvenance(BaseModel):
 
 
 class EnvironmentRiskRanking(BaseModel):
-    """The complete ranked result of evaluating multiple remediation candidates."""
+    """The complete ranked result of evaluating multiple remediation candidates.
+
+    Saturation (ANA-7a): is_saturated is True when the baseline or any
+    candidate enumeration saturated. Numbers are still produced in that case,
+    but they are lower bounds, not a complete remediation-ranking domain.
+
+    persistence_authoritative is True only for an unsaturated run computed
+    under an AnalysisContext (AnalysisPolicyV2, fingerprint, UTC evaluation
+    time) with a canonically resolved scope; otherwise
+    non_authoritative_reasons lists the fixed reason codes, sorted. Actually
+    persisting a result additionally requires engine identity authorization
+    (SEC-30), which is outside this pure result.
+    """
     aggregation_policy_version: str = "env-risk-v1"
     ranking_policy_version: str = "remediation-ranking-v1"
     analysis_policy_fingerprint: str | None = None
-    is_saturated: bool = False
+    provenance: AnalysisProvenance | None = None
+
+    baseline_is_saturated: bool
+    baseline_termination_reason: Literal["EXHAUSTED", "MAX_PATHS_REACHED"]
+    is_saturated: bool
+    persistence_authoritative: bool
+    non_authoritative_reasons: list[NonAuthoritativeReason]
 
     baseline_environment_risk: float
     baseline_path_count: int
 
     candidates: list[CounterfactualRemediationResult]
+
+    @model_validator(mode="after")
+    def _authority_is_consistent(self) -> "EnvironmentRiskRanking":
+        if self.non_authoritative_reasons != sorted(set(self.non_authoritative_reasons)):
+            raise ValueError("non_authoritative_reasons must be unique and sorted")
+        if self.persistence_authoritative == bool(self.non_authoritative_reasons):
+            raise ValueError("persistence_authoritative must be True exactly when there are no reasons")
+        if self.is_saturated and self.persistence_authoritative:
+            raise ValueError("a saturated ranking cannot be persistence-authoritative")
+        expected_fingerprint = self.provenance.policy_fingerprint if self.provenance else None
+        if self.analysis_policy_fingerprint != expected_fingerprint:
+            raise ValueError("analysis_policy_fingerprint must match the provenance fingerprint")
+        return self
 

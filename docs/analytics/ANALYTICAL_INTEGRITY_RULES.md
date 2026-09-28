@@ -156,6 +156,28 @@ this system does not appear as slowness. It appears as *silent quality degradati
 truncated path sets producing understated risk and biased structural metrics, with no visible
 symptom. Saturation reporting is the only thing that makes that failure visible.
 
+**ANA-7a — Counterfactual saturation and persistence authority.** [CURRENT] Counterfactual
+remediation analysis always computes its numbers, and always records saturation:
+
+- the baseline records `baseline_is_saturated` and `baseline_termination_reason`;
+- every candidate records `counterfactual_is_saturated` and
+  `counterfactual_termination_reason`, and is `rankable` only if neither the baseline nor its
+  own enumeration saturated;
+- the ranking's `is_saturated` is the baseline flag OR any candidate flag.
+
+With identical bounds a counterfactual can only lose paths, so a saturated counterfactual
+implies a saturated baseline; the engine fails closed if that invariant is ever violated.
+A saturated ranking is a lower bound, not a complete remediation-ranking domain.
+
+A ranking is `persistence_authoritative` only if it is unsaturated **and** was computed under an
+`AnalysisContext` (an `AnalysisPolicyV2` that bounds the baseline and every counterfactual
+identically, including `traversal_budget`; its fingerprint; a UTC evaluation time) with a
+canonically resolved scope (ARCH-28). Otherwise it lists fixed, sorted reason codes:
+`BASELINE_SATURATED`, `COUNTERFACTUAL_SATURATED`, `NO_ANALYSIS_CONTEXT`,
+`NON_CANONICAL_SCOPE`. Persisting a result additionally requires engine identity
+authorization (SEC-30). Runs without an `AnalysisContext` keep their legacy bounds and numbers
+and are never persistence-authoritative.
+
 ---
 
 ## 6. Bounded traversal semantics [CURRENT]
@@ -305,6 +327,7 @@ easier. See `TESTING_AND_VERIFICATION.md` §7.
 | ANA-5/6 | Fingerprints; comparability |
 | ANA-5a | Formula version = sealed constant set; V2 policy holds only tunables; v1 legacy |
 | ANA-7 | Saturation reported and propagated |
+| ANA-7a | Counterfactual saturation, rankability, persistence authority |
 | ANA-8 | Bound semantics respected |
 | ANA-9/10/11 | Confidence discounts; decay analytical; source-aware handling |
 | ANA-12/13 | Disclose uncalibrated constants; contested ≠ low confidence |
