@@ -1,0 +1,31 @@
+# Dependabot opens pull requests only; every dependency change still needs
+# maintainer review and approval (CODE-14 / SEC-14).
+#
+# Python dependencies are declared in backend/requirements.in, pinned in
+# backend/requirements.txt, and hash-locked in backend/requirements.lock
+# (pip-compile --generate-hashes), which the Docker image installs from. A
+# dependency PR must regenerate requirements.lock before merging, and it
+# changes the engine's dependency digest.
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+
+  # Base image of backend/Dockerfile. Python minor/major upgrades are ignored:
+  # the lockfile and the engine substrate identity are built for Python 3.12,
+  # so a Python upgrade is a deliberate, separately reviewed change.
+  - package-ecosystem: "docker"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 2
+    commit-message:
+      prefix: "chore(deps)"
+    ignore:
+      - dependency-name: "python"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
