@@ -4,8 +4,9 @@ import json
 import hashlib
 import platform
 import subprocess
-import fnmatch
 from pathlib import Path
+
+METADATA_FILENAME = "engine_metadata.json"
 
 def get_libc_info():
     name, ver = platform.libc_ver()
@@ -94,55 +95,33 @@ def get_dependency_info(req_path):
         "lockfile_digest": lockfile_digest
     }
 
-def load_dockerignore(root):
-    ignore_patterns = []
-    di_path = os.path.join(root, '.dockerignore')
-    if os.path.exists(di_path):
-        with open(di_path, 'r') as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith('#'):
-                    if line.endswith('/'):
-                        line = line[:-1]
-                    ignore_patterns.append(line)
-    return ignore_patterns
-
-def is_ignored(path, patterns, root):
-    rel = os.path.relpath(path, root)
-    rel_forward = rel.replace('\\', '/')
-    parts = rel_forward.split('/')
-    for p in patterns:
-        p_strip = p.strip('/')
-        if p_strip in parts:
-            return True
-        if fnmatch.fnmatch(rel_forward, p) or fnmatch.fnmatch(os.path.basename(path), p):
-            return True
-    return False
-
 def get_source_tree_info(root):
-    patterns = load_dockerignore(root)
-    # Exclude .git and the metadata file itself
-    patterns.extend(['.git', 'engine_metadata.json'])
+    """Digest the source tree actually delivered at `root` (source digest v2).
 
+    Runs inside the image after `COPY . .`, so the files under `root` ARE the
+    delivered set: Docker's own .dockerignore handling already decided what was
+    delivered, and this digest does not re-implement or second-guess it
+    (a re-implementation diverged from Docker's root-anchored matching and left
+    delivered files out of the digest). Every delivered file is hashed except
+    the root-level engine_metadata.json, which this script writes afterwards.
+    """
     file_hashes = []
     for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = [d for d in dirnames if not is_ignored(os.path.join(dirpath, d), patterns, root)]
-
         for f in filenames:
             fpath = os.path.join(dirpath, f)
-            if not is_ignored(fpath, patterns, root):
-                rel = os.path.relpath(fpath, root).replace('\\', '/')
-                # hash content
-                h = hashlib.sha256()
-                with open(fpath, 'rb') as fd:
-                    while chunk := fd.read(8192):
-                        h.update(chunk)
-                file_hashes.append((rel, h.hexdigest()))
+            rel = os.path.relpath(fpath, root).replace('\\', '/')
+            if rel == METADATA_FILENAME:
+                continue
+            h = hashlib.sha256()
+            with open(fpath, 'rb') as fd:
+                while chunk := fd.read(8192):
+                    h.update(chunk)
+            file_hashes.append((rel, h.hexdigest()))
 
     file_hashes.sort()
 
     h = hashlib.sha256()
-    h.update(b"attackgraph.source.v1")
+    h.update(b"attackgraph.source.v2")
     for rel, fhash in file_hashes:
         # framed: [len_path]:path|[len_hash]:hash or just simple framing
         # The prompt says: framed, sorted(relative_path + content_digest) pairs
@@ -174,6 +153,16 @@ def get_git_info():
 
     return commit, dirty
 
+def compute_engine_digest(source_version, source_tree_digest, dependency_digest, substrate_digest):
+    engine_digest_str = (
+        "attackgraph.engine.v1"
+        + source_version
+        + source_tree_digest
+        + dependency_digest
+        + substrate_digest
+    )
+    return hashlib.sha256(engine_digest_str.encode("utf-8")).hexdigest()
+
 def main():
     root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -182,15 +171,9 @@ def main():
     source_info = get_source_tree_info(root)
     source_version, dirty = get_git_info()
 
-    engine_digest_str = (
-        "attackgraph.engine.v1"
-        + source_version
-        + source_info["digest"]
-        + deps["digest"]
-        + substrate["digest"]
+    engine_digest = compute_engine_digest(
+        source_version, source_info["digest"], deps["digest"], substrate["digest"]
     )
-
-    engine_digest = hashlib.sha256(engine_digest_str.encode("utf-8")).hexdigest()
 
     metadata = {
         "engine_digest": engine_digest,
@@ -204,7 +187,7 @@ def main():
         "dependency_metadata": deps["metadata"]
     }
 
-    out_path = os.path.join(root, "engine_metadata.json")
+    out_path = os.path.join(root, METADATA_FILENAME)
     with open(out_path, "w") as f:
         json.dump(metadata, f, indent=2)
 

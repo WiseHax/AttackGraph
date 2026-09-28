@@ -153,6 +153,22 @@ investigated after an incident.
 fingerprints, collapsing evidence references, or reducing report detail to "simplify" is
 prohibited.
 
+### 8.1 Engine and delivered-source identity [CURRENT]
+
+**SEC-28 — The source digest describes the source actually delivered into the image.**
+Source digest v2 (`attackgraph.source.v2`) hashes every file present under `/app` after
+`COPY . .`, at any depth, excluding only the root-level `engine_metadata.json` that the build
+writes afterwards. It does not re-implement Docker's ignore matching: a previous emulation
+treated patterns as matching any path component, while Docker anchors bare patterns at the
+build-context root, so delivered files (nested `__pycache__/*.pyc`, `.env`, `*.pem`) were left
+out of the digest. `backend/.dockerignore` is the **delivery control**: it decides what is
+delivered, and the digest measures the result. Nested cache and secret files must not be
+delivered, so their patterns use the recursive `**/` form. This was verified empirically with a
+scratch `FROM scratch` build: with the hardened file, nested caches and secret-pattern files are
+excluded at any depth while legitimate nested source (including packages named `env`/`venv`)
+is delivered, and the real build context delivers exactly the tracked backend files. Changing
+what the digest covers is a new source digest version.
+
 ---
 
 ## 9. Rules for AI agents specifically
@@ -203,4 +219,5 @@ credential harvesters, and payload builders, regardless of stated intent.
 | SEC-14–17 | Supply chain: approval, pinning, provenance, minimalism |
 | SEC-18–21 | No dynamic execution; fail closed |
 | SEC-22/23 | Reproducibility and forensic record |
+| SEC-28 | Source digest v2 covers the delivered source; `.dockerignore` is delivery control |
 | SEC-24–27 | Agent-specific: confidentiality, injection resistance, no telemetry, no offensive tooling |
