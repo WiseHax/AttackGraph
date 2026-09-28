@@ -198,6 +198,22 @@ class CounterfactualRemediationResult(BaseModel):
     counterfactual_termination_reason: Literal["EXHAUSTED", "MAX_PATHS_REACHED"]
     rankable: bool
 
+    @model_validator(mode="after")
+    def _saturation_is_consistent(self) -> "CounterfactualRemediationResult":
+        # ANA-7a: the termination reason and the saturation flag describe the
+        # same enumeration; a saturated candidate is never rankable. Whether an
+        # unsaturated candidate is rankable also depends on the baseline and is
+        # checked by EnvironmentRiskRanking.
+        expected_reason = "MAX_PATHS_REACHED" if self.counterfactual_is_saturated else "EXHAUSTED"
+        if self.counterfactual_termination_reason != expected_reason:
+            raise ValueError(
+                "counterfactual_termination_reason must be MAX_PATHS_REACHED exactly when "
+                "counterfactual_is_saturated"
+            )
+        if self.counterfactual_is_saturated and self.rankable:
+            raise ValueError("a saturated counterfactual candidate cannot be rankable")
+        return self
+
 
 # Fixed reason codes explaining why a ranking is not persistence-authoritative.
 # Emitted in sorted order.
@@ -275,14 +291,49 @@ class EnvironmentRiskRanking(BaseModel):
 
     @model_validator(mode="after")
     def _authority_is_consistent(self) -> "EnvironmentRiskRanking":
-        if self.non_authoritative_reasons != sorted(set(self.non_authoritative_reasons)):
-            raise ValueError("non_authoritative_reasons must be unique and sorted")
-        if self.persistence_authoritative == bool(self.non_authoritative_reasons):
-            raise ValueError("persistence_authoritative must be True exactly when there are no reasons")
-        if self.is_saturated and self.persistence_authoritative:
-            raise ValueError("a saturated ranking cannot be persistence-authoritative")
+        # ANA-7a: every saturation and authority field is derived from the
+        # recorded facts (baseline and candidate saturation, provenance), so a
+        # ranking that contradicts those facts cannot be constructed.
+        expected_baseline_reason = "MAX_PATHS_REACHED" if self.baseline_is_saturated else "EXHAUSTED"
+        if self.baseline_termination_reason != expected_baseline_reason:
+            raise ValueError(
+                "baseline_termination_reason must be MAX_PATHS_REACHED exactly when baseline_is_saturated"
+            )
+
+        any_counterfactual_saturated = any(c.counterfactual_is_saturated for c in self.candidates)
+        if any_counterfactual_saturated and not self.baseline_is_saturated:
+            raise ValueError("a saturated counterfactual requires a saturated baseline")
+        if self.is_saturated != (self.baseline_is_saturated or any_counterfactual_saturated):
+            raise ValueError("is_saturated must equal baseline or any candidate saturation")
+        for candidate in self.candidates:
+            expected_rankable = not (self.baseline_is_saturated or candidate.counterfactual_is_saturated)
+            if candidate.rankable != expected_rankable:
+                raise ValueError(
+                    "candidate rankable must be True exactly when neither the baseline nor the "
+                    "candidate saturated"
+                )
+
         expected_fingerprint = self.provenance.policy_fingerprint if self.provenance else None
         if self.analysis_policy_fingerprint != expected_fingerprint:
             raise ValueError("analysis_policy_fingerprint must match the provenance fingerprint")
+
+        if self.non_authoritative_reasons != sorted(set(self.non_authoritative_reasons)):
+            raise ValueError("non_authoritative_reasons must be unique and sorted")
+        expected_reasons = set()
+        if self.baseline_is_saturated:
+            expected_reasons.add(NON_AUTHORITATIVE_BASELINE_SATURATED)
+        if any_counterfactual_saturated:
+            expected_reasons.add(NON_AUTHORITATIVE_COUNTERFACTUAL_SATURATED)
+        if self.provenance is None:
+            expected_reasons.add(NON_AUTHORITATIVE_NO_ANALYSIS_CONTEXT)
+        elif self.provenance.scope_id is None:
+            expected_reasons.add(NON_AUTHORITATIVE_NON_CANONICAL_SCOPE)
+        if self.non_authoritative_reasons != sorted(expected_reasons):
+            raise ValueError(
+                f"non_authoritative_reasons must be exactly {sorted(expected_reasons)} "
+                f"for the recorded saturation and provenance"
+            )
+        if self.persistence_authoritative != (not expected_reasons):
+            raise ValueError("persistence_authoritative must be True exactly when there are no reasons")
         return self
 

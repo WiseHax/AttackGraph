@@ -176,7 +176,18 @@ canonically resolved scope (ARCH-28). Otherwise it lists fixed, sorted reason co
 `BASELINE_SATURATED`, `COUNTERFACTUAL_SATURATED`, `NO_ANALYSIS_CONTEXT`,
 `NON_CANONICAL_SCOPE`. Persisting a result additionally requires engine identity
 authorization (SEC-30). Runs without an `AnalysisContext` keep their legacy bounds and numbers
-and are never persistence-authoritative.
+and are never persistence-authoritative. The result schemas enforce these relationships, so a
+result whose saturation, reasons, authority or provenance contradict each other is rejected.
+
+Of the policy's version selectors, `risk_formula_version` selects the risk formula used in the
+computation. `env_risk_formula_version` and `decay_policy_version` each admit only the single
+implemented version (`env-risk-v1`, `decay-policy-v1`) and are represented through the policy
+fingerprint and provenance; they do not select between implementations.
+
+The canonical-scope condition relies on the scope having been obtained from
+`resolve_analytical_scope` (ARCH-28): an `AnalyticalScope` can be constructed with any
+identity, so persistence must re-verify the recorded `(scope_id, definition_version)` against
+the canonical store before treating a result as authoritative.
 
 ---
 

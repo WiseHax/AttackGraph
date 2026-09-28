@@ -29,7 +29,12 @@ from app.analytics.policy import AnalysisPolicyV2, generate_policy_fingerprint
 from app.domain.enums import RelationshipType
 from app.graph.networkx import NetworkXStore
 from app.graph.pathfinder import TraversalEngine
-from app.schemas.analytics import AnalyticalScope, EnvironmentRiskRanking
+from app.schemas.analytics import (
+    AnalysisProvenance,
+    AnalyticalScope,
+    CounterfactualRemediationResult,
+    EnvironmentRiskRanking,
+)
 
 EVAL_TIME = datetime(2026, 1, 1, tzinfo=timezone.utc)
 SCOPE_ID = uuid.UUID(int=4242)
@@ -454,3 +459,170 @@ def test_context_mode_ranking_is_byte_identical_across_hash_seeds():
         outputs.add(result.stdout)
     assert len(outputs) == 1
     assert b'"is_saturated":true' in outputs.pop()  # max_paths=5 < 7 paths: saturation is exercised
+
+
+# --- Schema-level enforcement of the C1 invariants (PR #6 review, HIGH-1) -----
+
+FINGERPRINT = "f" * 64
+
+
+def _candidate(saturated=False, reason=None, rankable=None, rel=1) -> dict:
+    return {
+        "target_relationship_id": U(rel),
+        "target_source_id": U(2),
+        "target_target_id": U(3),
+        "target_relationship_type": "ROUTES_TO",
+        "baseline_environment_risk": 0.5,
+        "counterfactual_environment_risk": 0.1,
+        "risk_reduction": 0.4,
+        "baseline_path_count": 3,
+        "counterfactual_path_count": 3,
+        "removed_path_ids": [],
+        "remaining_path_ids": [],
+        "counterfactual_is_saturated": saturated,
+        "counterfactual_termination_reason": reason or ("MAX_PATHS_REACHED" if saturated else "EXHAUSTED"),
+        "rankable": (not saturated) if rankable is None else rankable,
+    }
+
+
+def _provenance(canonical=True) -> AnalysisProvenance:
+    identity = {"scope_id": SCOPE_ID, "scope_definition_version": 1} if canonical else {}
+    return AnalysisProvenance(
+        policy_version="analysis-policy-v2", policy_fingerprint=FINGERPRINT,
+        evaluation_time=EVAL_TIME, **identity,
+    )
+
+
+def _ranking(baseline_saturated=False, candidates=(), provenance=None, **overrides) -> dict:
+    """A consistent ranking for the given facts; overrides then make it inconsistent."""
+    any_cf = any(c["counterfactual_is_saturated"] for c in candidates)
+    reasons = set()
+    if baseline_saturated:
+        reasons.add("BASELINE_SATURATED")
+    if any_cf:
+        reasons.add("COUNTERFACTUAL_SATURATED")
+    if provenance is None:
+        reasons.add("NO_ANALYSIS_CONTEXT")
+    elif provenance.scope_id is None:
+        reasons.add("NON_CANONICAL_SCOPE")
+    fields = {
+        "analysis_policy_fingerprint": provenance.policy_fingerprint if provenance else None,
+        "provenance": provenance,
+        "baseline_is_saturated": baseline_saturated,
+        "baseline_termination_reason": "MAX_PATHS_REACHED" if baseline_saturated else "EXHAUSTED",
+        "is_saturated": baseline_saturated or any_cf,
+        "persistence_authoritative": not reasons,
+        "non_authoritative_reasons": sorted(reasons),
+        "baseline_environment_risk": 0.5,
+        "baseline_path_count": 3,
+        "candidates": list(candidates),
+    }
+    fields.update(overrides)
+    return fields
+
+
+@pytest.mark.parametrize(
+    "fields",
+    [
+        _ranking(),
+        _ranking(provenance=_provenance()),
+        _ranking(provenance=_provenance(canonical=False)),
+        _ranking(baseline_saturated=True, candidates=[_candidate(saturated=True), _candidate(rel=2, rankable=False)],
+                 provenance=_provenance()),
+        _ranking(candidates=[_candidate(), _candidate(rel=2)], provenance=_provenance()),
+    ],
+    ids=["legacy", "authoritative", "ad-hoc-scope", "saturated", "unsaturated-candidates"],
+)
+def test_consistent_rankings_are_accepted(fields):
+    EnvironmentRiskRanking(**fields)
+
+
+def test_review_state_1_saturated_baseline_presented_as_unsaturated_authoritative_is_rejected():
+    with pytest.raises(ValidationError):
+        EnvironmentRiskRanking(**_ranking(
+            baseline_saturated=True, provenance=_provenance(),
+            is_saturated=False, persistence_authoritative=True, non_authoritative_reasons=[],
+        ))
+
+
+def test_review_state_2_authoritative_without_provenance_is_rejected():
+    with pytest.raises(ValidationError, match="NO_ANALYSIS_CONTEXT"):
+        EnvironmentRiskRanking(**_ranking(persistence_authoritative=True, non_authoritative_reasons=[]))
+
+
+def test_review_state_3_baseline_saturated_reason_on_unsaturated_baseline_is_rejected():
+    with pytest.raises(ValidationError, match="non_authoritative_reasons must be exactly"):
+        EnvironmentRiskRanking(**_ranking(non_authoritative_reasons=["BASELINE_SATURATED", "NO_ANALYSIS_CONTEXT"]))
+
+
+def test_review_state_4_saturated_candidate_marked_rankable_is_rejected():
+    with pytest.raises(ValidationError, match="cannot be rankable"):
+        CounterfactualRemediationResult(**_candidate(saturated=True, rankable=True))
+
+
+def test_review_state_5_saturated_candidate_with_exhausted_reason_is_rejected():
+    with pytest.raises(ValidationError, match="counterfactual_termination_reason"):
+        CounterfactualRemediationResult(**_candidate(saturated=True, reason="EXHAUSTED", rankable=False))
+
+
+def test_unsaturated_candidate_with_max_paths_reason_is_rejected():
+    with pytest.raises(ValidationError, match="counterfactual_termination_reason"):
+        CounterfactualRemediationResult(**_candidate(saturated=False, reason="MAX_PATHS_REACHED"))
+
+
+@pytest.mark.parametrize(
+    "fields, message",
+    [
+        # Baseline termination reason disagrees with the flag.
+        (_ranking(baseline_termination_reason="MAX_PATHS_REACHED"), "baseline_termination_reason"),
+        (_ranking(baseline_saturated=True, baseline_termination_reason="EXHAUSTED"), "baseline_termination_reason"),
+        # Ranking-level flag disagrees with baseline / candidates.
+        (_ranking(is_saturated=True), "is_saturated"),
+        (_ranking(baseline_saturated=True, is_saturated=False), "is_saturated"),
+        # A saturated candidate requires a saturated baseline.
+        (_ranking(candidates=[_candidate(saturated=True)]), "requires a saturated baseline"),
+        # Rankability must follow baseline and candidate saturation.
+        (_ranking(baseline_saturated=True, candidates=[_candidate(rankable=True)]), "rankable"),
+        (_ranking(candidates=[_candidate(rankable=False)]), "rankable"),
+        # Each reason code is present exactly when its condition holds.
+        (_ranking(baseline_saturated=True, candidates=[_candidate(saturated=True)],
+                  non_authoritative_reasons=["BASELINE_SATURATED", "NO_ANALYSIS_CONTEXT"]),
+         "non_authoritative_reasons must be exactly"),
+        (_ranking(baseline_saturated=True, candidates=[_candidate(rankable=False)],
+                  non_authoritative_reasons=["BASELINE_SATURATED", "COUNTERFACTUAL_SATURATED", "NO_ANALYSIS_CONTEXT"]),
+         "non_authoritative_reasons must be exactly"),
+        (_ranking(provenance=_provenance(), non_authoritative_reasons=["NO_ANALYSIS_CONTEXT"],
+                  persistence_authoritative=False), "non_authoritative_reasons must be exactly"),
+        (_ranking(provenance=_provenance(canonical=False), non_authoritative_reasons=[],
+                  persistence_authoritative=True), "non_authoritative_reasons must be exactly"),
+        (_ranking(provenance=_provenance(), non_authoritative_reasons=["NON_CANONICAL_SCOPE"],
+                  persistence_authoritative=False), "non_authoritative_reasons must be exactly"),
+        # Authority must be True exactly when no reason applies.
+        (_ranking(provenance=_provenance(), persistence_authoritative=False), "persistence_authoritative"),
+    ],
+)
+def test_rankings_contradicting_their_recorded_facts_are_rejected(fields, message):
+    with pytest.raises(ValidationError, match=message):
+        EnvironmentRiskRanking(**fields)
+
+
+@pytest.mark.parametrize("max_paths", [1, 2, 3, 6, 7, 100])
+@pytest.mark.parametrize("mode", ["legacy", "context-canonical", "context-ad-hoc"])
+def test_engine_results_satisfy_the_schema_invariants(mode, max_paths):
+    if mode == "legacy":
+        ranking = legacy(mesh_store(), max_paths=max_paths)
+    else:
+        scope = RESOLVED_SCOPE if mode == "context-canonical" else AD_HOC_SCOPE
+        ranking = CounterfactualEngine(mesh_store(), {}).evaluate_candidates(
+            U(1), U(5), MESH_CANDIDATES, context=context(policy(max_paths=max_paths), scope=scope)
+        )
+    revalidated = EnvironmentRiskRanking.model_validate(ranking.model_dump())
+    assert revalidated.model_dump_json() == ranking.model_dump_json()
+
+
+def test_unset_sentinel_is_the_default_for_legacy_only_parameters():
+    import inspect
+    parameters = inspect.signature(CounterfactualEngine.evaluate_candidates).parameters
+    for name in ("evaluation_time", "max_hops", "max_paths", "allowed_types"):
+        assert parameters[name].default is counterfactual_module._UNSET
+    assert repr(counterfactual_module._UNSET) == "<unset>"

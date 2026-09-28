@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import datetime
-from typing import Any, Iterable
+from typing import Iterable
 
 from app.graph.store import GraphStore
 from app.graph.pathfinder import TraversalEngine
@@ -24,9 +24,16 @@ from app.schemas.analytics import (
     normalize_evaluation_time,
 )
 
+class _Unset:
+    """Type of the _UNSET sentinel: "argument not supplied"."""
+
+    def __repr__(self) -> str:
+        return "<unset>"
+
+
 # Marks a keyword argument the caller did not supply, so that explicit bounds
 # can be rejected when an AnalysisContext defines them (C4).
-_UNSET: Any = object()
+_UNSET = _Unset()
 
 # Bounds of the legacy (no AnalysisContext) call path, unchanged (D-L).
 _LEGACY_MAX_HOPS = 6
@@ -113,10 +120,10 @@ class CounterfactualEngine:
         source_id: uuid.UUID,
         target_id: uuid.UUID,
         candidate_relationship_ids: Iterable[uuid.UUID],
-        evaluation_time: datetime = _UNSET,
-        max_hops: int = _UNSET,
-        max_paths: int = _UNSET,
-        allowed_types: set[str] | list[str] | None = _UNSET,
+        evaluation_time: datetime | _Unset = _UNSET,
+        max_hops: int | _Unset = _UNSET,
+        max_paths: int | _Unset = _UNSET,
+        allowed_types: set[str] | list[str] | None | _Unset = _UNSET,
         context: AnalysisContext | None = None,
     ) -> EnvironmentRiskRanking:
         """Evaluate a set of candidate relationship removals and rank them.
@@ -124,9 +131,13 @@ class CounterfactualEngine:
         Two call modes:
         - With `context` (persistable/comparable, C4): one AnalysisPolicyV2
           defines max_hops, traversal_budget, edge costs, max_paths and the
-          allowed relationship types for the baseline and every candidate;
-          evaluation time and scope come from the context. Passing
-          evaluation_time or any bound explicitly as well is rejected.
+          allowed relationship types for the baseline and every candidate,
+          and its risk_formula_version selects the risk formula;
+          env_risk_formula_version and decay_policy_version each admit only
+          the implemented version and are recorded through the policy
+          fingerprint and provenance. Evaluation time and scope come from the
+          context. Passing evaluation_time or any bound explicitly as well is
+          rejected. Parameters left at `_UNSET` were not supplied.
         - Without `context` (legacy, non-persistable): evaluation_time is
           required; max_hops (default 6), max_paths (default 100) and
           allowed_types (default: all) apply, with no traversal budget.
