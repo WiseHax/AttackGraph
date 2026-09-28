@@ -51,6 +51,12 @@ reference time; that time must be passed in explicitly so that a computation can
 reproduced exactly at a later date. Reading the clock inside an analysis function makes the
 result unreproducible and is a violation.
 
+The injected evaluation time must be **timezone-aware**; naive datetimes are rejected, because
+they would be interpreted in the host's local timezone. It is normalised to **canonical UTC**
+and recorded in the result's analytical provenance (`AnalysisProvenance`, serialised with a
+`Z` suffix) together with the policy version, policy fingerprint and resolved scope identity.
+There is no fallback to the current time.
+
 **Ordering is part of the result.** Path lists, rankings and factor breakdowns must have a
 fully specified total order, including deterministic tie-breaking on a stable key. "The order
 doesn't matter" is false here: it matters for reproducibility, diffing, and hashing.

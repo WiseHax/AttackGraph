@@ -3,6 +3,8 @@
 from datetime import datetime
 from typing import Any
 
+from app.schemas.analytics import normalize_evaluation_time
+
 
 CONFIDENCE_TIERS = ["UNKNOWN", "LOW", "MEDIUM", "HIGH"]
 
@@ -26,9 +28,13 @@ def apply_decay(evidence: dict[str, Any], evaluation_time: datetime) -> str:
 
     if evaluation_time is None:
         raise ValueError("evaluation_time must be provided for deterministic analysis")
+    # ANA-3: naive datetimes would be read in the host timezone; reject them.
+    normalize_evaluation_time(evaluation_time)
 
     collected_at = evidence.get("collected_at")
     ttl = evidence.get("freshness_ttl_seconds")
+    if collected_at is not None and (collected_at.tzinfo is None or collected_at.utcoffset() is None):
+        raise ValueError("evidence collected_at must be timezone-aware; naive datetimes are rejected")
 
     if not collected_at or not ttl or ttl <= 0:
         return raw_confidence

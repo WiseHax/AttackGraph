@@ -57,3 +57,17 @@ It must not be confused with historical preservation.
 
 
 Future Phase 9 snapshot functionality will rely on this append-only structure. At this stage, no bitemporal abstractions (e.g., `superseded_by_id`) have been added to the PostgreSQL schema. The current model guarantees all historical states are preserved naturally within the `Evidence` table for future time-travel queries.
+
+
+
+## 3. Evaluation Time Contract
+
+
+
+Evaluation time is an explicit analytical input (ANA-3). There is no fallback to the current time: `apply_decay` refuses a missing evaluation time, and `CounterfactualEngine.evaluate_candidates` requires one.
+
+**Timezone-aware only:** evaluation times and evidence `collected_at` values must be timezone-aware. Naive datetimes are rejected (`normalize_evaluation_time`), because Python would interpret them in the host's local timezone and results would depend on where the engine runs.
+
+**Canonical UTC:** evaluation time is normalised to UTC. Equivalent instants expressed in different timezones (e.g. `12:00+08:00` and `04:00Z`) produce identical decay decisions and byte-identical results.
+
+**Recorded in provenance:** `AnalysisContext` (policy `AnalysisPolicyV2`, evaluation time, `AnalyticalScope`) is the single carrier of a run's inputs. `AnalysisContext.provenance()` yields an `AnalysisProvenance` record with the policy version, policy fingerprint, canonical UTC evaluation time (serialised with a `Z` suffix), and the resolved scope identity (`scope_id`, `scope_definition_version`), which is absent for an ad-hoc, non-persistable scope. Provenance is pure data: it performs no I/O and carries no engine identity.

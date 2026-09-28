@@ -6,8 +6,24 @@ do not pollute the source of truth in PostgreSQL.
 """
 
 import uuid
+from datetime import datetime, timezone
 from typing import Annotated, Literal
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, field_validator, model_validator
+
+
+def normalize_evaluation_time(value: datetime) -> datetime:
+    """Validate an injected evaluation time and return it in canonical UTC.
+
+    Evaluation time is an explicit analytical input (ANA-3): it must be a
+    timezone-aware datetime. A naive datetime would be interpreted in the host's
+    local timezone, making results environment-dependent, so it is rejected.
+    There is deliberately no fallback to the current time.
+    """
+    if not isinstance(value, datetime):
+        raise ValueError("evaluation_time must be a datetime")
+    if value.tzinfo is None or value.utcoffset() is None:
+        raise ValueError("evaluation_time must be timezone-aware; naive datetimes are rejected")
+    return value.astimezone(timezone.utc)
 
 
 class AnalyticalScope(BaseModel):
@@ -172,6 +188,36 @@ class CounterfactualRemediationResult(BaseModel):
 
     removed_path_ids: list[str]
     remaining_path_ids: list[str]
+
+
+class AnalysisProvenance(BaseModel):
+    """What an analytical result was computed under (ANA-5, SEC-22).
+
+    Pure data: no I/O, no engine identity. evaluation_time is canonical UTC
+    and serializes with a 'Z' suffix. scope_id / scope_definition_version name
+    the exact resolved ScopeDefinition (ARCH-28); both are absent for an
+    ad-hoc, non-persistable scope.
+    """
+    policy_version: str
+    policy_fingerprint: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+    evaluation_time: datetime
+    scope_id: uuid.UUID | None = None
+    scope_definition_version: Annotated[StrictInt, Field(ge=1)] | None = None
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    @field_validator("evaluation_time", mode="before")
+    @classmethod
+    def _canonical_utc(cls, value: datetime) -> datetime:
+        return normalize_evaluation_time(value)
+
+    @model_validator(mode="after")
+    def _scope_identity_pair(self) -> "AnalysisProvenance":
+        if (self.scope_id is None) != (self.scope_definition_version is None):
+            raise ValueError(
+                "scope_id and scope_definition_version must both be present or both be absent"
+            )
+        return self
 
 
 class EnvironmentRiskRanking(BaseModel):

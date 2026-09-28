@@ -15,6 +15,7 @@ from app.schemas.analytics import (
     FindingRiskInput,
     RiskInput,
     generate_canonical_path_id,
+    normalize_evaluation_time,
 )
 
 
@@ -110,6 +111,7 @@ class CounterfactualEngine:
             target_id: The attack destination entity.
             candidate_relationship_ids: Relationships to evaluate for removal.
             evaluation_time: Injected reference time for evidence decay (ANA-3).
+                Must be timezone-aware; naive datetimes are rejected.
             max_hops: Bound for Pathfinder.
             max_paths: Bound for Pathfinder.
             allowed_types: Bound for Pathfinder.
@@ -117,6 +119,10 @@ class CounterfactualEngine:
         Returns:
             EnvironmentRiskRanking containing ranked results.
         """
+        # ANA-3: fail fast on a naive or non-datetime evaluation time, before
+        # any computation; the value is used in canonical UTC.
+        evaluation_time = normalize_evaluation_time(evaluation_time)
+
         # 1. Baseline Evaluation
         baseline_pathfinder = TraversalEngine(self.store)
         baseline_result = baseline_pathfinder.find_paths(
