@@ -284,6 +284,9 @@ is not established whether saturation state propagates into environment risk, ov
 choke-point, counterfactual and posture outputs derived from a saturated path set. Until
 confirmed, treat propagation as required by ANA-7 and STOP S8 if your change depends on
 current behaviour.
+*Status:* propagation into counterfactual outputs is implemented (ANA-7a). Overlap,
+choke-point and posture outputs do not yet carry saturation state, so this item remains open
+for them.
 
 **A-4 [OPEN] — Interface stability status.** It is not established which interfaces are
 formally frozen versus merely stable in practice. Treat `Evidence`, relationship type
