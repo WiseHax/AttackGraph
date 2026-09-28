@@ -172,6 +172,21 @@ path is recognisably the same path across computations.
 > volatile values, path identity will churn without underlying change. Any task depending on
 > path identity stability triggers STOP S8 until a maintainer confirms the input set.
 
+**ARCH-28 — Canonical scope identity is resolved by exact version, never by "latest".**
+[CURRENT] The only bridge from a persisted, immutable `ScopeDefinition(scope_id, version)` to
+the runtime `AnalyticalScope` is `app.graph.scope_resolution.resolve_analytical_scope`. It
+requires an explicit `definition_version`, never selects the latest version, fails closed when
+the exact definition does not exist, maps only the v1 fields (`UNIVERSAL` / `ALL`), and
+performs no writes. The resolved `AnalyticalScope` carries `scope_id` and
+`definition_version`, which are present together or absent together.
+
+- A persistable or comparable analytical run must use a canonically resolved scope, so that
+  its provenance names the exact immutable definition that was resolved.
+- An ad-hoc `AnalyticalScope` (no identity) remains valid for non-persisted analysis only; it
+  has no canonical persisted identity.
+- Resolution adds no scope semantics: the analytical graph stays universal (J-22), and
+  `GraphStore` / `TraversalEngine` remain scope-agnostic.
+
 ---
 
 ## 7. Counterfactual analysis [CURRENT]
@@ -318,3 +333,4 @@ frontend, or authentication layer exists. Do not assume one. Do not add one.
 | ARCH-25 | env-risk-v1 frozen; no env-risk-v2 |
 | ARCH-26 | Version-additive change |
 | ARCH-27 | One concern per change |
+| ARCH-28 | Canonical scope identity by exact-version resolution; never "latest" |

@@ -6,19 +6,36 @@ do not pollute the source of truth in PostgreSQL.
 """
 
 import uuid
-from typing import Literal
-from pydantic import BaseModel, ConfigDict, model_validator
+from typing import Annotated, Literal
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, model_validator
 
 
 class AnalyticalScope(BaseModel):
     """Immutable, resolved scope definition passed to the graph layer.
 
     v1 only supports UNIVERSAL input boundary and ALL reporting selector.
+
+    Canonical identity (ARCH-28): scope_id and definition_version identify the
+    exact immutable ScopeDefinition this scope was resolved from, and are set
+    only by app.graph.scope_resolution.resolve_analytical_scope. They are
+    present together or absent together. A scope without them is ad-hoc: valid
+    for non-persisted analysis, but it has no canonical persisted identity and
+    cannot back a persistable or comparable run.
     """
     input_boundary_kind: Literal["UNIVERSAL"]
     reporting_selector: Literal["ALL"]
+    scope_id: uuid.UUID | None = None
+    definition_version: Annotated[StrictInt, Field(ge=1)] | None = None
 
     model_config = ConfigDict(frozen=True)
+
+    @model_validator(mode="after")
+    def validate_identity_pair(self) -> "AnalyticalScope":
+        if (self.scope_id is None) != (self.definition_version is None):
+            raise ValueError(
+                "scope_id and definition_version must both be present or both be absent"
+            )
+        return self
 
 
 class AttackPath(BaseModel):
