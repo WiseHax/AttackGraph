@@ -1,8 +1,13 @@
 import json
 import os
+import re
 from pathlib import Path
-from pydantic import BaseModel
-from typing import Optional, Literal
+from pydantic import BaseModel, Field, StrictBool
+from typing import Annotated, Optional, Literal
+
+# SEC-30: advisory source provenance must still be a real commit SHA to verify.
+_SOURCE_VERSION_PATTERN = re.compile(r"^[0-9a-f]{40}$")
+Sha256Hex = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
 
 class SubstrateMetadata(BaseModel):
     python_implementation: str
@@ -14,15 +19,17 @@ class SubstrateMetadata(BaseModel):
     substrate_completeness: Literal["COMPLETE", "INCOMPLETE"]
 
 class EngineMetadata(BaseModel):
-    engine_digest: str
+    # Digests are SHA-256 hex; dirty must be a real boolean; the resolved
+    # dependency set must be non-empty. Anything else is malformed metadata.
+    engine_digest: Sha256Hex
     source_version: str
-    dirty: bool
-    source_tree_digest: str
-    dependency_digest: str
-    substrate_digest: str
-    lockfile_digest: str
+    dirty: StrictBool
+    source_tree_digest: Sha256Hex
+    dependency_digest: Sha256Hex
+    substrate_digest: Sha256Hex
+    lockfile_digest: Sha256Hex
     substrate_metadata: SubstrateMetadata
-    dependency_metadata: list[str]
+    dependency_metadata: Annotated[list[str], Field(min_length=1)]
 
 class EngineIdentityService:
     """Service to load and verify engine provenance (J-5 and ART-25)."""
@@ -84,7 +91,12 @@ class EngineIdentityService:
                 return "ENGINE_UNVERIFIABLE(metadata_writable)"
 
         # Verify Substrate completeness
-        metadata = self.get_metadata()
+        # Fail closed (SEC-21): unreadable, non-JSON, wrongly shaped or
+        # incomplete metadata is unverifiable, never an exception.
+        try:
+            metadata = self.get_metadata()
+        except (OSError, ValueError, TypeError):
+            return "ENGINE_UNVERIFIABLE(malformed_metadata)"
         if not metadata:
             return "ENGINE_UNVERIFIABLE(malformed_metadata)"
 
@@ -98,6 +110,12 @@ class EngineIdentityService:
         # Check runtime patch version mismatch
         if metadata.substrate_metadata.python_version != platform.python_version():
             return "ENGINE_UNVERIFIABLE(python_version_mismatch)"
+
+        # source_version is advisory provenance (source_tree_digest is the
+        # authoritative identity), but an unknown or non-SHA commit cannot be
+        # traced, so it is not verifiable for persistence.
+        if not _SOURCE_VERSION_PATTERN.fullmatch(metadata.source_version):
+            return "ENGINE_UNVERIFIABLE(source_version_unverifiable)"
 
         return "VERIFIED"
 

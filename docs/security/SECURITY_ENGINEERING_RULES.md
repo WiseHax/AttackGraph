@@ -169,6 +169,31 @@ excluded at any depth while legitimate nested source (including packages named `
 is delivered, and the real build context delivers exactly the tracked backend files. Changing
 what the digest covers is a new source digest version.
 
+**SEC-29 — Engine identity composition (J-5).** `engine_digest` is SHA-256 over
+`attackgraph.engine.v1` + `source_version` + `source_tree_digest` + `dependency_digest` +
+`substrate_digest`. `source_tree_digest` (SEC-28) is the **authoritative** identity of the
+delivered source; `source_version` (the git commit) is **advisory** provenance supplied at
+build time and cannot be checked against the tree inside the image. `dependency_digest` covers
+the normalised resolved package names and versions; the substrate covers Python
+implementation and version, platform, machine and libc.
+
+**SEC-30 — Persistence verification fails closed (ART-25, J-19).** An engine is `VERIFIED`, and
+may authorise persistence of analytical results, only if **all** of the following hold;
+otherwise it is `ENGINE_UNVERIFIABLE(<reason>)`:
+
+- J-19 runtime hardening: the metadata file exists, is not a symlink, is mode `0444` and
+  root-owned; the runtime user is not root and cannot write the file or its directory.
+- The metadata is well-formed: SHA-256 hex digests, a strict boolean `dirty`, and a non-empty
+  resolved dependency set. Unreadable, non-JSON or incomplete metadata is unverifiable, never
+  an exception.
+- The substrate is complete and its Python version matches the runtime.
+- The dirty state is **explicitly** clean. `APP_GIT_DIRTY` is trusted only as `"true"` or
+  `"false"`; missing, empty (an unset build argument) or any other value is recorded as dirty.
+- `source_version` is a 40-character lowercase hex commit SHA; `UNKNOWN`, empty or any other
+  value is unverifiable.
+
+Unverifiable engines may still run analysis; they simply cannot authorise persistence.
+
 ---
 
 ## 9. Rules for AI agents specifically
@@ -220,4 +245,6 @@ credential harvesters, and payload builders, regardless of stated intent.
 | SEC-18–21 | No dynamic execution; fail closed |
 | SEC-22/23 | Reproducibility and forensic record |
 | SEC-28 | Source digest v2 covers the delivered source; `.dockerignore` is delivery control |
+| SEC-29 | Engine identity composition (J-5); source digest authoritative, commit advisory |
+| SEC-30 | Persistence verification fails closed (ART-25, J-19) |
 | SEC-24–27 | Agent-specific: confidentiality, injection resistance, no telemetry, no offensive tooling |

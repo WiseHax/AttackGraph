@@ -132,9 +132,21 @@ def get_source_tree_info(root):
         "digest": h.hexdigest()
     }
 
+def parse_dirty_state(value):
+    """Dirty state must be asserted explicitly as "true" or "false".
+
+    Missing, empty (e.g. an unset Docker build ARG passed through ENV) or any
+    other value is an unknown state and fails closed as dirty.
+    """
+    if value is None:
+        return True
+    normalized = value.strip().lower()
+    if normalized == "false":
+        return False
+    return True
+
 def get_git_info():
-    commit = os.environ.get("APP_GIT_COMMIT")
-    dirty_env = os.environ.get("APP_GIT_DIRTY")
+    commit = (os.environ.get("APP_GIT_COMMIT") or "").strip()
 
     if not commit:
         try:
@@ -142,14 +154,7 @@ def get_git_info():
         except Exception:
             commit = "UNKNOWN"
 
-    if dirty_env is None:
-        try:
-            status = subprocess.check_output(["git", "status", "--porcelain"], text=True).strip()
-            dirty = True if status else False
-        except Exception:
-            dirty = True
-    else:
-        dirty = dirty_env.lower() == "true"
+    dirty = parse_dirty_state(os.environ.get("APP_GIT_DIRTY"))
 
     return commit, dirty
 

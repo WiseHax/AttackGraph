@@ -99,13 +99,13 @@ def test_incomplete_substrate_explicitly_detected(monkeypatch):
 @pytest.fixture
 def mock_metadata_file(tmp_path):
     metadata = {
-        "engine_digest": "abc",
-        "source_version": "123",
+        "engine_digest": "a" * 64,
+        "source_version": "0123456789abcdef0123456789abcdef01234567",
         "dirty": False,
-        "source_tree_digest": "def",
-        "dependency_digest": "ghi",
-        "substrate_digest": "jkl",
-        "lockfile_digest": "mno",
+        "source_tree_digest": "b" * 64,
+        "dependency_digest": "c" * 64,
+        "substrate_digest": "d" * 64,
+        "lockfile_digest": "e" * 64,
         "substrate_metadata": {
             "python_implementation": platform.python_implementation(),
             "python_version": platform.python_version(), # Match runtime to avoid mismatch error
@@ -115,7 +115,7 @@ def mock_metadata_file(tmp_path):
             "libc_version": "2.31",
             "substrate_completeness": "COMPLETE"
         },
-        "dependency_metadata": []
+        "dependency_metadata": ["package==1.0.0"]
     }
     file_path = tmp_path / "engine_metadata.json"
     file_path.write_text(json.dumps(metadata))
