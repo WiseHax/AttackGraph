@@ -1,119 +1,271 @@
 # AttackGraph
 
-AttackGraph is an evidence-driven attack-path and security-risk analysis platform for authorized environments.
+Evidence-driven attack-path and security-risk analysis for **authorized environments**.
 
-## Overview
+AttackGraph models an environment you are authorized to assess as a typed security graph and
+answers a defensive question:
 
-AttackGraph is designed to model authorized environments as security relationships and analyze potential attack paths toward critical assets. By decoupling canonical security facts from analytical graph projections, it ensures a highly reliable, explainable, and deterministic approach to defensive security analysis. 
+> *What can reach what, through which relationships, on what evidence, how dangerous is it,
+> and which defensive change reduces that risk?*
 
-## Core Model
+It is an analysis platform. It does not scan, probe, exploit, or act on any environment; it
+reasons over facts that have been imported into it.
 
-Assets → Relationships → Findings → Attack Paths → Risk → Remediation
+> **Status:** early-stage research software under active development (version `0.1.0`, no
+> releases yet). Interfaces and data formats may change. See [Project status](#project-status).
 
-- **Assets (Entities)**: Security-relevant objects such as servers, users, databases, or cloud resources.
-- **Relationships**: Directed, typed connections between assets (e.g., `CAN_AUTHENTICATE_TO`, `ROUTES_TO`).
-- **Findings**: Security vulnerabilities, misconfigurations, or warnings attached to entities.
-- **Attack Paths**: Discovered analytical routes an attacker could theoretically traverse from a source to a target.
-- **Risk**: Deterministic, bounded calculation of the security threat posed by an attack path.
-- **Remediation**: Planned mechanisms to mitigate identified risk.
+---
 
-*Note: Canonical security facts (Entities, Relationships, Findings, Evidence) are stored durably in the domain layer (PostgreSQL). Analytical results (Attack Paths, Risk) are never persisted as canonical security facts. The graph projection is entirely rebuildable on demand.*
+## Contents
 
-## Design Principles
+- [Core model](#core-model)
+- [Canonical truth vs. derived analysis](#canonical-truth-vs-derived-analysis)
+- [Architecture](#architecture)
+- [Quick start](#quick-start)
+- [Development and testing](#development-and-testing)
+- [Documentation](#documentation)
+- [Project status](#project-status)
+- [Known limitations](#known-limitations)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [Security](#security)
+- [License](#license)
 
-- **Evidence-backed analysis**: Every relationship can be traced back to independent evidence with confidence scores.
-- **Deterministic analysis**: Pathfinding and risk calculations yield identical results for identical inputs.
-- **Explainable risk**: Risk scores are strictly mathematical, unbounded by hidden black-box randomness.
-- **Typed relationships**: Enforced canonical relationship taxonomy.
-- **Truth tiers**: Strict separation between `OBSERVED` facts, `INFERRED` facts, and `ANALYTICAL` conclusions.
-- **Rebuildable graph projection**: The analytical graph is a read-only topology dynamically generated from PostgreSQL.
-- **Analytical results separated from canonical facts**: Analytical data never pollutes the database source of truth.
-- **Defensive and authorized use**: The platform models risk strictly for defensive engineering.
+---
+
+## Core model
+
+```
+Assets → Relationships → Evidence → Findings → Attack Paths → Risk → Remediation
+```
+
+| Stage | Meaning |
+|---|---|
+| **Assets** | Security-relevant entities: the internet, domains, IPs, hosts, servers, workstations, containers, cloud resources, applications, APIs, databases, users, service accounts, groups, roles, repositories, network segments. |
+| **Relationships** | Directed, typed edges between assets, e.g. `EXPOSES`, `ROUTES_TO`, `CAN_AUTHENTICATE_TO`, `RUNS_AS`, `HAS_PERMISSION_ON`, `MEMBER_OF`, `CAN_ASSUME`, `DEPENDS_ON`, `STORES`, `TRUSTS`, `COMMUNICATES_WITH`. Parallel edges are distinct objects. Reachability is not the same as authority. |
+| **Evidence** | Why a relationship is believed: source, source type, collection and import time, confidence, freshness TTL, raw reference. Evidence is append-only and never mutated. |
+| **Findings** | Vulnerabilities or misconfigurations attached to assets. Findings are relational inputs to risk, not graph nodes. |
+| **Attack paths** | Bounded, deterministic paths from a source to a target, identified by ordered entity and relationship IDs. |
+| **Risk** | Versioned, deterministic scores (`risk-v1` per path, `env-risk-v1` aggregate) that always ship with a factor breakdown. |
+| **Remediation** | Counterfactual analysis: remove one relationship from a clone of the projection, recompute, and rank candidates by risk reduction. |
+
+Relationships carry a **truth tier**: `OBSERVED` (a source asserted it) or `INFERRED` (derived by
+an explicit rule). Analytical conclusions are a third, non-persistable tier and can never be
+stored as relationships.
+
+## Canonical truth vs. derived analysis
+
+AttackGraph keeps a hard boundary between facts and computations:
+
+| Canonical (persisted in PostgreSQL) | Derived (computed, disposable) |
+|---|---|
+| Entities, relationships, evidence, findings | Graph projection |
+| Scope definitions (immutable, versioned) | Attack paths and path identities |
+| Audit log | Risk scores and breakdowns, environment risk |
+| | Overlap metrics, counterfactual rankings |
+
+- The graph projection is always rebuildable from PostgreSQL; no fact exists only in the graph.
+- Analytical output is never written back as canonical data.
+- Every analytical computation is deterministic: explicit, timezone-aware evaluation time; no
+  wall-clock reads; total ordering of results; versioned formulas; policy fingerprints.
+
+The full rules are in [Architecture rules](docs/architecture/ARCHITECTURE_RULES.md) and
+[Analytical integrity rules](docs/analytics/ANALYTICAL_INTEGRITY_RULES.md).
 
 ## Architecture
 
-AttackGraph implements a decoupled projection architecture:
+```mermaid
+flowchart TD
+    subgraph Canonical["Canonical layer — PostgreSQL (source of truth)"]
+        DB[("Entities · Relationships · Evidence<br/>Findings · Scopes · Audit log")]
+    end
 
-`API / application layer → domain core → PostgreSQL canonical data → graph projection → analytical engines`
+    subgraph Projection["Projection layer"]
+        SR["Scope resolution<br/>exact (scope_id, version)"]
+        GB["GraphBuilder"]
+        GS["GraphStore<br/>(NetworkX MultiDiGraph)"]
+        TE["TraversalEngine<br/>bounded, deterministic"]
+    end
 
-- **PostgreSQL**: Durable source of truth for all domain entities.
-- **Domain Layer**: SQLAlchemy models governing strict canonical facts.
-- **Graph Projection**: In-memory NetworkX analytical store populated via optimized bulk queries.
-- **Analytical Engines**: Pure mathematical processors (Pathfinder, RiskEngine) that perform zero I/O.
+    subgraph Analysis["Analysis layer (no I/O)"]
+        DE["Evidence decay<br/>decay-policy-v1"]
+        RE["RiskEngine<br/>risk-v1"]
+        AG["Environment aggregation<br/>env-risk-v1"]
+        CF["CounterfactualEngine<br/>clone · remove · recompute · rank"]
+        PO["AnalysisPolicyV2 · AnalysisContext<br/>fingerprint · provenance"]
+    end
 
-## Current Capabilities
+    DB --> SR --> GB
+    DB --> GB
+    GB --> GS --> TE
+    TE --> RE
+    DE --> RE
+    RE --> AG --> CF
+    GS -.->|clone| CF
+    PO -.->|policy, evaluation time, scope| CF
+```
 
-- canonical entities
-- typed relationships
-- evidence and provenance
-- findings
-- PostgreSQL persistence
-- NetworkX graph projection
-- deterministic bounded attack-path analysis
-- truth-tier handling
-- confidence handling
-- deterministic risk calculation
-- finding-aware risk amplification
-- PostgreSQL integration testing
+- **Dependency direction is one-way** (analysis → projection → canonical → domain). Analysis
+  code never touches NetworkX directly; it uses `GraphStore` and `TraversalEngine`.
+- **Traversal has two distinct bounds:** `max_hops` (computational safety) and
+  `traversal_budget` (modelled attacker effort), plus `max_paths`. Hitting `max_paths` is
+  reported as saturation, not as a complete result.
+- **Scope:** a persisted `ScopeDefinition` is resolved by exact version into an
+  `AnalyticalScope`. In v1 the analytical graph is always universal (`UNIVERSAL` / `ALL`), so
+  paths that originate outside a reporting area are never silently dropped.
+- **Engine identity:** the container records a source-tree digest of the delivered files, a
+  dependency digest and a substrate digest. Only a clean, traceable, hardened build is
+  considered verified — a precondition for the planned persistence of analytical results.
 
-## Current Status
+Repository layout:
 
-- Phase 1 — Complete
-- Phase 2 — Complete
-- Phase 3 — Complete
-- Phase 4 — Complete
-- Phase 5 — Planned
+```
+backend/
+  app/
+    domain/      ORM models and enums (canonical schema)
+    storage/     database session, repositories, projection queries
+    graph/       GraphStore, NetworkX store, GraphBuilder, TraversalEngine, scope resolution
+    analytics/   risk, aggregation, decay, counterfactual, policy, context, engine identity
+    schemas/     Pydantic schemas for canonical input and analytical results
+    main.py      FastAPI app (currently a /health endpoint only)
+  alembic/       database migrations
+  scripts/       engine metadata generation, synthetic data loader
+  tests/         unit tests and PostgreSQL integration tests
+docs/            engineering governance (see Documentation)
+```
 
-## Roadmap
+## Quick start
 
-**Phase 5 (Planned)**: Counterfactual Analysis and Remediation Ranking.
-
-## Development
-
-### Prerequisites
-
-- Python 3.12+
-- PostgreSQL 16 (or Docker)
-
-### Local Development Setup
+Prerequisites: Docker (for PostgreSQL 16), Python 3.12+, and a POSIX shell (Linux, macOS,
+WSL or Git Bash) for the commands below.
 
 ```bash
-# Clone the repository
 git clone https://github.com/WiseHax/AttackGraph.git
 cd AttackGraph
 
-# Set up environment variables
+# 1. Configure the environment, then edit .env and set real values for
+#    POSTGRES_PASSWORD and SECRET_KEY (never commit .env)
 cp .env.example .env
 
-# Start PostgreSQL locally
+# 2. Start PostgreSQL. On first start the container also creates the
+#    separate <POSTGRES_DB>_test database used by integration tests.
 docker compose up -d postgres
 
-# Install backend dependencies
+# 3. Install backend dependencies
 cd backend
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
-# Run migrations to initialize the schema
+# 4. Apply migrations. Alembic reads DATABASE_URL from the environment,
+#    so export the values from .env first.
+set -a && . ../.env && set +a
 alembic upgrade head
 ```
 
-## Testing
-
-AttackGraph maintains a comprehensive unit and integration test suite.
-
-Current verified test result: **129 tests passed.**
+The FastAPI application currently exposes only a health check:
 
 ```bash
-cd backend
-
-# Run the full test suite
-export TEST_DATABASE_URL="postgresql+asyncpg://attackgraph:YOUR_TEST_DB_PASSWORD@localhost:5432/attackgraph_test"
-python -m pytest tests -v
+uvicorn app.main:app --reload     # GET http://127.0.0.1:8000/health
 ```
 
-## Security and Authorized Use
+There is no analytical HTTP API yet; the engines are used as a Python library (see the
+integration tests for end-to-end examples).
 
-AttackGraph is intended strictly for authorized environments and defensive security analysis. It is a modeling platform, not an offensive exploitation tool.
+## Development and testing
+
+All commands run from `backend/`.
+
+```bash
+# Unit tests only (no database needed; integration tests skip themselves)
+python -m pytest
+
+# Full suite including PostgreSQL integration tests
+set -a && . ../.env && set +a        # provides TEST_DATABASE_URL
+python -m pytest
+```
+
+> **Warning:** the integration test fixture runs `DROP SCHEMA public CASCADE` on the database
+> named by `TEST_DATABASE_URL` before migrating it. Point it **only** at a dedicated test
+> database (the default `.env.example` value targets `<POSTGRES_DB>_test`), never at a database
+> whose contents you need.
+
+Testing expectations are part of the engineering governance: invariant, golden, determinism
+and negative tests are a specification, and a test is never weakened to make it pass. See
+[Testing and verification](docs/testing/TESTING_AND_VERIFICATION.md).
+
+The Docker image installs dependencies from the hash-pinned `requirements.lock`, runs as an
+unprivileged user, and generates read-only engine metadata at build time (see
+[`backend/Dockerfile`](backend/Dockerfile)).
+
+## Documentation
+
+| Document | Covers |
+|---|---|
+| [AGENTS.md](AGENTS.md) | Entry point, source-of-truth hierarchy, STOP conditions |
+| [Architecture rules](docs/architecture/ARCHITECTURE_RULES.md) | Layering, canonical vs. derived, bounds, identity, open questions |
+| [Analytical integrity rules](docs/analytics/ANALYTICAL_INTEGRITY_RULES.md) | Truth tiers, determinism, versioning, fingerprints, saturation |
+| [Security engineering rules](docs/security/SECURITY_ENGINEERING_RULES.md) | Threat model, secrets, untrusted input, supply chain, engine identity |
+| [Testing and verification](docs/testing/TESTING_AND_VERIFICATION.md) | Test taxonomy, golden fixtures, prohibited test edits |
+| [Code standards](docs/engineering/CODE_STANDARDS.md) | Determinism in code, dependencies, structure |
+| [Definition of done](docs/engineering/DEFINITION_OF_DONE.md) | The gate every change must pass |
+| [AI engineering playbook](docs/engineering/AI_ENGINEERING_PLAYBOOK.md) | Workflow for AI coding agents |
+| [Identity and time](backend/docs/identity_and_time.md) | Path identity, evidence supersession, evaluation time |
+| [Changelog](CHANGELOG.md) | Notable changes |
+
+## Project status
+
+AttackGraph is developed in phases. Current state:
+
+- **Complete:** canonical relational model; graph projection; bounded traversal; `risk-v1`;
+  counterfactual remediation ranking; analytical integrity and security posture; policy
+  fingerprints and comparability; reproducible engine identity; versioned scope foundation.
+- **In progress:** hardening required before persisting historical analytical results
+  (Phase 7B). Completed so far: deterministic counterfactual output, fail-closed
+  counterfactual behaviour, truthful analysis policy (`AnalysisPolicyV2`), exact-version scope
+  resolution, explicit UTC evaluation-time provenance, hardened engine identity and delivered
+  source identity. Remaining: saturation semantics and policy-driven traversal for
+  counterfactual analysis.
+- **Not implemented:** persistence of analytical results or snapshots, an analytical HTTP API,
+  authentication, connectors/importers.
+
+## Known limitations
+
+Disclosed per the [analytical integrity rules](docs/analytics/ANALYTICAL_INTEGRITY_RULES.md):
+
+- `env-risk-v1` does not correct for path overlap, so correlated paths can be double counted;
+  environment risk may rise with graph density. It is a comparative score, not a probability.
+- Risk weights, traversal costs and decay parameters are structurally defined but **not
+  empirically calibrated**.
+- Enumeration is bounded: a saturated path set is a lower bound, and counterfactual results
+  do not yet propagate saturation state.
+- Counterfactual *deltas* under one fixed policy are more defensible than absolute risk levels.
+
+## Roadmap
+
+Documented direction (not commitments; each requires a separately authorized phase — see
+[Architecture rules §11](docs/architecture/ARCHITECTURE_RULES.md)):
+
+1. Complete pre-7B hardening: counterfactual saturation semantics and policy-driven traversal.
+2. Phase 7B: persisted analytical artefacts bound to snapshots, with reproducible provenance.
+3. Snapshot comparison, posture drift and risk-change attribution.
+
+AttackGraph will not become an exploitation tool, an autonomous agent acting on environments,
+a generic vulnerability scanner, or an ML-based risk scorer
+([AGENTS.md §2](AGENTS.md)).
+
+## Contributing
+
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) first: changes
+follow a documented engineering workflow, must keep analysis deterministic, and must not
+weaken tests or governance rules. Participation is governed by the
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security
+
+AttackGraph is for **authorized, defensive** use only. To report a vulnerability, follow
+[SECURITY.md](SECURITY.md) — do not disclose vulnerability details in public issues.
 
 ## License
 
-Licensing is to be finalized.
+No license has been selected yet. Until a `LICENSE` file is added, default copyright applies
+and no rights to use, modify or redistribute the code are granted. If you plan to contribute
+or reuse the code, please open an issue first.
