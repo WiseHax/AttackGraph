@@ -4,9 +4,8 @@ Thank you for your interest in AttackGraph. This project's value rests on the
 trustworthiness of its numbers, so contributions are held to an explicit engineering
 discipline. Please read this guide before opening a pull request.
 
-> **License note:** the project has not selected a license yet (see [README](README.md#license)).
-> Please open an issue to discuss any substantial contribution before investing significant
-> effort.
+> **License:** AttackGraph is licensed under the [MIT License](LICENSE). Please open an issue to
+> discuss any substantial contribution before investing significant effort.
 
 ## Scope: what AttackGraph is and is not
 

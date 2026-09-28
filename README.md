@@ -266,6 +266,4 @@ AttackGraph is for **authorized, defensive** use only. To report a vulnerability
 
 ## License
 
-No license has been selected yet. Until a `LICENSE` file is added, default copyright applies
-and no rights to use, modify or redistribute the code are granted. If you plan to contribute
-or reuse the code, please open an issue first.
+AttackGraph is licensed under the [MIT License](LICENSE).
