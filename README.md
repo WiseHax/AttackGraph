@@ -1,9 +1,12 @@
 # AttackGraph
 
-Evidence-driven attack-path and security-risk analysis for **authorized environments**.
+**Map attack paths. Prove risk. Secure what matters.**
 
-AttackGraph models an environment you are authorized to assess as a typed security graph and
-answers a defensive question:
+AttackGraph is an evidence-driven security analytics platform that models authorized
+environments as a typed security graph and analyzes plausible attack paths toward critical
+assets.
+
+It answers a defensive question:
 
 > *What can reach what, through which relationships, on what evidence, how dangerous is it,
 > and which defensive change reduces that risk?*
