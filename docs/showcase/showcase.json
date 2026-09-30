@@ -1,0 +1,3408 @@
+{
+  "project": {
+    "name": "AttackGraph",
+    "version": "0.1.0",
+    "schema_version": "attackgraph-showcase-v1"
+  },
+  "disclaimer": [
+    "Synthetic demonstration: every entity, address, record and finding is fictional.",
+    "AttackGraph analyses a model of an authorized environment; it does not scan, probe or exploit anything.",
+    "Attack paths are plausible paths under the model and the policy's bounds, not confirmed attacks.",
+    "Risk values are comparative analytical scores under versioned formulas, not probabilities of compromise."
+  ],
+  "engine_identity": {
+    "status": "ENGINE_UNVERIFIABLE(missing_metadata)",
+    "persistence_authorized": false,
+    "metadata": null
+  },
+  "scope": {
+    "scope_id": "08f35593-3ef8-5c08-8aaf-c61a7582f3f8",
+    "definition_version": 1,
+    "display_name": "Example Corp showcase (synthetic)",
+    "input_boundary_kind": "UNIVERSAL",
+    "reporting_selector": "ALL"
+  },
+  "analysis": {
+    "source_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+    "target_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+    "evaluation_time": "2026-01-15T12:00:00Z",
+    "policy": {
+      "version": "analysis-policy-v2",
+      "traversal_policy_version": "traversal-policy-v1",
+      "risk_formula_version": "risk-v1",
+      "env_risk_formula_version": "env-risk-v1",
+      "decay_policy_version": "decay-policy-v1",
+      "max_hops": 8,
+      "traversal_budget": 12,
+      "max_paths": 50,
+      "allowed_edge_types": [
+        "CAN_ASSUME",
+        "CAN_AUTHENTICATE_TO",
+        "COMMUNICATES_WITH",
+        "DEPENDS_ON",
+        "EXPOSES",
+        "HAS_PERMISSION_ON",
+        "MEMBER_OF",
+        "ROUTES_TO",
+        "RUNS_AS",
+        "STORES",
+        "TRUSTS"
+      ],
+      "edge_costs": {
+        "CAN_ASSUME": 2,
+        "CAN_AUTHENTICATE_TO": 2,
+        "COMMUNICATES_WITH": 1,
+        "DEPENDS_ON": 2,
+        "EXPOSES": 1,
+        "HAS_PERMISSION_ON": 1,
+        "MEMBER_OF": 1,
+        "ROUTES_TO": 1,
+        "RUNS_AS": 1,
+        "STORES": 2,
+        "TRUSTS": 2
+      }
+    },
+    "provenance": {
+      "policy_version": "analysis-policy-v2",
+      "policy_fingerprint": "74b28bf025e5c693f6743715649fae203ddd6892c6499b46ad66feb4ba5ed5d5",
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "scope_id": "08f35593-3ef8-5c08-8aaf-c61a7582f3f8",
+      "scope_definition_version": 1
+    }
+  },
+  "environment": {
+    "organisation": "Example Corp (synthetic)",
+    "notes": [
+      "Every name, address and record in this environment is fictional.",
+      "Hostnames use the reserved .test TLD; addresses come from RFC 5737 documentation ranges."
+    ],
+    "entities": [
+      {
+        "id": "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+        "canonical_key": "showcase:group:db-admins",
+        "entity_type": "GROUP",
+        "name": "db-admins",
+        "description": "Directory group of database administrators.",
+        "criticality": null,
+        "exposure": null,
+        "address": null,
+        "finding_ids": []
+      },
+      {
+        "id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+        "canonical_key": "showcase:role:prod-db-admin",
+        "entity_type": "ROLE",
+        "name": "prod-db-admin",
+        "description": "Cloud role with administrative rights on the production database.",
+        "criticality": null,
+        "exposure": null,
+        "address": null,
+        "finding_ids": []
+      },
+      {
+        "id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+        "canonical_key": "showcase:server:web-server",
+        "entity_type": "SERVER",
+        "name": "web-01.corp.example.test",
+        "description": "Application server behind the storefront.",
+        "criticality": "MEDIUM",
+        "exposure": "INTERNAL",
+        "address": "192.0.2.21",
+        "finding_ids": [
+          "f7f10ac0-301d-5a6a-a9a0-8269489531b0"
+        ]
+      },
+      {
+        "id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+        "canonical_key": "showcase:database:customer-db",
+        "entity_type": "DATABASE",
+        "name": "customer-db.corp.example.test",
+        "description": "Production database holding (fictional) customer records.",
+        "criticality": "CRITICAL",
+        "exposure": "RESTRICTED",
+        "address": "192.0.2.50",
+        "finding_ids": [
+          "1dda7963-c85f-526c-ab4f-2b70d817151a"
+        ]
+      },
+      {
+        "id": "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+        "canonical_key": "showcase:user:alice",
+        "entity_type": "USER",
+        "name": "alice (synthetic database engineer)",
+        "description": "Fictional engineer account used for database administration.",
+        "criticality": null,
+        "exposure": null,
+        "address": null,
+        "finding_ids": []
+      },
+      {
+        "id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+        "canonical_key": "showcase:server:ci-runner",
+        "entity_type": "SERVER",
+        "name": "ci-runner-01.corp.example.test",
+        "description": "Continuous-integration runner used for production deployments.",
+        "criticality": "HIGH",
+        "exposure": "INTERNAL",
+        "address": "198.51.100.40",
+        "finding_ids": [
+          "6f8da14a-3639-5606-90cb-53aa97518d3d"
+        ]
+      },
+      {
+        "id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+        "canonical_key": "showcase:workstation:dev-laptop",
+        "entity_type": "WORKSTATION",
+        "name": "laptop-dev-07.corp.example.test",
+        "description": "Engineering workstation.",
+        "criticality": "MEDIUM",
+        "exposure": "INTERNAL",
+        "address": "198.51.100.77",
+        "finding_ids": []
+      },
+      {
+        "id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+        "canonical_key": "showcase:internet:internet",
+        "entity_type": "INTERNET",
+        "name": "Internet",
+        "description": "Untrusted external networks; the modelled starting point.",
+        "criticality": null,
+        "exposure": "EXTERNAL",
+        "address": null,
+        "finding_ids": []
+      },
+      {
+        "id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+        "canonical_key": "showcase:service_account:svc-deploy",
+        "entity_type": "SERVICE_ACCOUNT",
+        "name": "svc-deploy",
+        "description": "Deployment service identity.",
+        "criticality": null,
+        "exposure": null,
+        "address": null,
+        "finding_ids": []
+      },
+      {
+        "id": "8ef69904-f8f2-54fd-b34c-5c961d782df2",
+        "canonical_key": "showcase:service_account:svc-storefront",
+        "entity_type": "SERVICE_ACCOUNT",
+        "name": "svc-storefront",
+        "description": "Service identity of the storefront application.",
+        "criticality": null,
+        "exposure": null,
+        "address": null,
+        "finding_ids": []
+      },
+      {
+        "id": "92a65255-ab96-5807-8490-1472d73b1c85",
+        "canonical_key": "showcase:host:vpn-gateway",
+        "entity_type": "HOST",
+        "name": "vpn.example.test",
+        "description": "Remote-access VPN gateway.",
+        "criticality": "HIGH",
+        "exposure": "EXTERNAL",
+        "address": "203.0.113.10",
+        "finding_ids": []
+      },
+      {
+        "id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+        "canonical_key": "showcase:host:jump-host",
+        "entity_type": "HOST",
+        "name": "jump-01.corp.example.test",
+        "description": "Administrative jump host.",
+        "criticality": "HIGH",
+        "exposure": "RESTRICTED",
+        "address": "198.51.100.5",
+        "finding_ids": [
+          "2fdc299f-0fc1-5f2d-aec6-881bfd8bdd7b"
+        ]
+      },
+      {
+        "id": "972129f4-5c64-5313-a67d-74cd4127a66a",
+        "canonical_key": "showcase:api:payments-api",
+        "entity_type": "API",
+        "name": "payments-api.corp.example.test",
+        "description": "Internal payments API.",
+        "criticality": "HIGH",
+        "exposure": "INTERNAL",
+        "address": "192.0.2.31",
+        "finding_ids": []
+      },
+      {
+        "id": "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+        "canonical_key": "showcase:repository:source-repo",
+        "entity_type": "REPOSITORY",
+        "name": "git.corp.example.test/platform/deploy",
+        "description": "Deployment configuration repository.",
+        "criticality": "HIGH",
+        "exposure": "INTERNAL",
+        "address": null,
+        "finding_ids": []
+      },
+      {
+        "id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+        "canonical_key": "showcase:network_segment:corp-network",
+        "entity_type": "NETWORK_SEGMENT",
+        "name": "corp-lan (198.51.100.0/24)",
+        "description": "Internal corporate network segment reachable from the VPN.",
+        "criticality": null,
+        "exposure": "INTERNAL",
+        "address": null,
+        "finding_ids": []
+      },
+      {
+        "id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+        "canonical_key": "showcase:application:storefront",
+        "entity_type": "APPLICATION",
+        "name": "storefront.example.test",
+        "description": "Public web storefront.",
+        "criticality": "MEDIUM",
+        "exposure": "EXTERNAL",
+        "address": "203.0.113.20",
+        "finding_ids": [
+          "c865053c-dca3-5c6a-a7c1-fb65851c8e8b"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "id": "038ef80a-2611-5044-8284-6b43aa428b12",
+        "source_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+        "target_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+        "relationship_type": "CAN_ASSUME",
+        "truth_tier": "OBSERVED",
+        "description": "svc-deploy is allowed to assume the prod-db-admin role.",
+        "evidence_ids": [
+          "17a74de3-f94c-53ec-9471-09974c9428de"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-iam-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "03d90d9a-e961-55f6-928b-40dcc0bc99c0",
+        "source_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+        "target_entity_id": "972129f4-5c64-5313-a67d-74cd4127a66a",
+        "relationship_type": "COMMUNICATES_WITH",
+        "truth_tier": "OBSERVED",
+        "description": "web-01 calls the payments API.",
+        "evidence_ids": [
+          "b7bfd064-e942-5e2e-bfac-9ff39e5f275a"
+        ],
+        "resolved_confidence": "MEDIUM",
+        "resolved_source": "synthetic-flow-logs",
+        "on_baseline_path": true
+      },
+      {
+        "id": "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+        "source_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+        "target_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+        "relationship_type": "ROUTES_TO",
+        "truth_tier": "OBSERVED",
+        "description": "The storefront load balancer forwards traffic to web-01.",
+        "evidence_ids": [
+          "68e6aa78-dc3a-54e7-95f7-f937c39265c8"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-load-balancer-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "111b26c6-5aba-5a54-8425-931ab82c7077",
+        "source_entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+        "target_entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+        "relationship_type": "ROUTES_TO",
+        "truth_tier": "OBSERVED",
+        "description": "The jump host has network reachability to the CI runner (parallel to the authentication relationship).",
+        "evidence_ids": [
+          "d70d65f6-f271-5728-acf7-e1483a6d0469"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-firewall-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "116945da-aa3b-5589-b27e-e9a63cd87e0f",
+        "source_entity_id": "972129f4-5c64-5313-a67d-74cd4127a66a",
+        "target_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+        "relationship_type": "DEPENDS_ON",
+        "truth_tier": "OBSERVED",
+        "description": "The payments API depends on customer-db.",
+        "evidence_ids": [
+          "b0c44be1-e809-5e64-9024-487e6fe8fbdc"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-config-scan",
+        "on_baseline_path": true
+      },
+      {
+        "id": "24ef3f8c-e4b3-561d-8dd7-b537d9ca68de",
+        "source_entity_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+        "target_entity_id": "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+        "relationship_type": "RUNS_AS",
+        "truth_tier": "OBSERVED",
+        "description": "alice has an interactive session on laptop-dev-07 (stale observation).",
+        "evidence_ids": [
+          "9647696a-cc71-5131-ad34-fa83fb2fea30"
+        ],
+        "resolved_confidence": "MEDIUM",
+        "resolved_source": "synthetic-endpoint-telemetry",
+        "on_baseline_path": true
+      },
+      {
+        "id": "36d371cf-cadd-541b-898e-d04ed319bd16",
+        "source_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+        "target_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+        "relationship_type": "ROUTES_TO",
+        "truth_tier": "OBSERVED",
+        "description": "web-01 can reach corp-lan (no segmentation between the web tier and corp-lan).",
+        "evidence_ids": [
+          "d70d65f6-f271-5728-acf7-e1483a6d0469"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-firewall-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "449942b7-9c56-5712-9e8c-95800805bcb3",
+        "source_entity_id": "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+        "target_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+        "relationship_type": "HAS_PERMISSION_ON",
+        "truth_tier": "OBSERVED",
+        "description": "db-admins has administrative rights on customer-db.",
+        "evidence_ids": [
+          "d11d5533-b933-5361-b81c-1c83e2ea4980"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-database-grants-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "4a9ef885-c39d-5095-86d2-374ad45c2965",
+        "source_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+        "target_entity_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+        "relationship_type": "ROUTES_TO",
+        "truth_tier": "OBSERVED",
+        "description": "Inbound VPN connections from the internet reach the gateway.",
+        "evidence_ids": [
+          "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-firewall-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+        "source_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+        "target_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+        "relationship_type": "ROUTES_TO",
+        "truth_tier": "OBSERVED",
+        "description": "Inbound HTTPS from the internet reaches the storefront.",
+        "evidence_ids": [
+          "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-firewall-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "54665505-2ce1-5f1d-b5f5-60f6c9cd7a85",
+        "source_entity_id": "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+        "target_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+        "relationship_type": "STORES",
+        "truth_tier": "OBSERVED",
+        "description": "The deploy repository stores a svc-deploy token.",
+        "evidence_ids": [
+          "7099572b-c3ba-59d5-8eb3-4ea71bd1e9ea"
+        ],
+        "resolved_confidence": "MEDIUM",
+        "resolved_source": "synthetic-secret-scan",
+        "on_baseline_path": true
+      },
+      {
+        "id": "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+        "source_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+        "target_entity_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+        "relationship_type": "ROUTES_TO",
+        "truth_tier": "OBSERVED",
+        "description": "corp-lan can reach engineering laptops.",
+        "evidence_ids": [
+          "d70d65f6-f271-5728-acf7-e1483a6d0469"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-firewall-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "7a317a64-ba2b-57a6-992e-717aba7ab0df",
+        "source_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+        "target_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+        "relationship_type": "HAS_PERMISSION_ON",
+        "truth_tier": "OBSERVED",
+        "description": "prod-db-admin has administrative rights on customer-db.",
+        "evidence_ids": [
+          "d11d5533-b933-5361-b81c-1c83e2ea4980"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-database-grants-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "8b6484af-4b99-5e4b-b4dc-dccf91577bc7",
+        "source_entity_id": "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+        "target_entity_id": "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+        "relationship_type": "MEMBER_OF",
+        "truth_tier": "OBSERVED",
+        "description": "alice is a member of db-admins.",
+        "evidence_ids": [
+          "8f66e7b2-9403-5236-b584-81a0f3fa7ade"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-directory-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "8b9ed93f-9434-5d13-a9c9-ba2c44a3ddd6",
+        "source_entity_id": "8ef69904-f8f2-54fd-b34c-5c961d782df2",
+        "target_entity_id": "972129f4-5c64-5313-a67d-74cd4127a66a",
+        "relationship_type": "HAS_PERMISSION_ON",
+        "truth_tier": "OBSERVED",
+        "description": "svc-storefront may call the payments API.",
+        "evidence_ids": [
+          "17a74de3-f94c-53ec-9471-09974c9428de",
+          "b7bfd064-e942-5e2e-bfac-9ff39e5f275a"
+        ],
+        "resolved_confidence": "MEDIUM",
+        "resolved_source": "synthetic-flow-logs",
+        "on_baseline_path": true
+      },
+      {
+        "id": "96f62c4f-b015-5bb6-a0df-bee1efeb57d3",
+        "source_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+        "target_entity_id": "8ef69904-f8f2-54fd-b34c-5c961d782df2",
+        "relationship_type": "RUNS_AS",
+        "truth_tier": "OBSERVED",
+        "description": "The storefront process runs as svc-storefront.",
+        "evidence_ids": [
+          "ad385611-5abc-5134-910e-42a8a6e311d9"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-cluster-inventory",
+        "on_baseline_path": true
+      },
+      {
+        "id": "9d192c70-0e19-5d08-9480-ca2bfe8aacef",
+        "source_entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+        "target_entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+        "relationship_type": "CAN_AUTHENTICATE_TO",
+        "truth_tier": "OBSERVED",
+        "description": "The jump host holds an SSH key accepted by the CI runner.",
+        "evidence_ids": [
+          "c54280e3-a319-597c-bc4b-fae98524492e",
+          "d60b7637-03d1-5284-9efd-723039ace1a4"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-ssh-config-audit",
+        "on_baseline_path": true
+      },
+      {
+        "id": "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+        "source_entity_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+        "target_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+        "relationship_type": "ROUTES_TO",
+        "truth_tier": "OBSERVED",
+        "description": "The VPN places clients on corp-lan.",
+        "evidence_ids": [
+          "769335d0-56d1-5d3c-9957-a2eae9bcccdf"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-vpn-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+        "source_entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+        "target_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+        "relationship_type": "RUNS_AS",
+        "truth_tier": "OBSERVED",
+        "description": "Deployment jobs on the CI runner execute as svc-deploy.",
+        "evidence_ids": [
+          "fa89414a-1499-5d21-988c-de207751308d"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-ci-inventory",
+        "on_baseline_path": true
+      },
+      {
+        "id": "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+        "source_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+        "target_entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+        "relationship_type": "ROUTES_TO",
+        "truth_tier": "OBSERVED",
+        "description": "corp-lan can reach the jump host.",
+        "evidence_ids": [
+          "d70d65f6-f271-5728-acf7-e1483a6d0469"
+        ],
+        "resolved_confidence": "HIGH",
+        "resolved_source": "synthetic-firewall-export",
+        "on_baseline_path": true
+      },
+      {
+        "id": "ef665128-14a3-57ab-9bcf-e2e14a0250ce",
+        "source_entity_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+        "target_entity_id": "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+        "relationship_type": "CAN_AUTHENTICATE_TO",
+        "truth_tier": "OBSERVED",
+        "description": "A git credential cached on laptop-dev-07 can write to the deploy repository.",
+        "evidence_ids": [
+          "d12f6d49-4ee8-59c2-aa8b-9b1459d3ca65"
+        ],
+        "resolved_confidence": "MEDIUM",
+        "resolved_source": "synthetic-endpoint-telemetry",
+        "on_baseline_path": true
+      },
+      {
+        "id": "fd3fa767-51b8-5a5d-b51a-aedb96ccbd88",
+        "source_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+        "target_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+        "relationship_type": "RUNS_AS",
+        "truth_tier": "INFERRED",
+        "description": "Inferred by rule: the deployment agent on web-01 runs as svc-deploy (no direct observation).",
+        "evidence_ids": [],
+        "resolved_confidence": "UNKNOWN",
+        "resolved_source": "inference:fd3fa767-51b8-5a5d-b51a-aedb96ccbd88",
+        "on_baseline_path": true
+      }
+    ],
+    "evidence": [
+      {
+        "id": "17a74de3-f94c-53ec-9471-09974c9428de",
+        "source": "synthetic-iam-export",
+        "source_type": "identity_policy",
+        "assertion": "Identity policy export: role bindings and assume-role grants.",
+        "collected_at": "2026-01-14T12:00:00Z",
+        "freshness_ttl_seconds": 604800,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "iam-snapshot-2026-01-14",
+        "supports_relationship_ids": [
+          "038ef80a-2611-5044-8284-6b43aa428b12",
+          "8b9ed93f-9434-5d13-a9c9-ba2c44a3ddd6"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "5d5a7d83-2705-5605-b43f-7d2bef7bbdf3",
+        "source": "synthetic-vulnerability-scan",
+        "source_type": "vulnerability_scan",
+        "assertion": "Authenticated vulnerability scan of internal hosts.",
+        "collected_at": "2026-01-13T12:00:00Z",
+        "freshness_ttl_seconds": 1209600,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "vuln-scan-2026-01-13",
+        "supports_relationship_ids": [],
+        "supports_finding_ids": [
+          "1dda7963-c85f-526c-ab4f-2b70d817151a",
+          "2fdc299f-0fc1-5f2d-aec6-881bfd8bdd7b",
+          "c865053c-dca3-5c6a-a7c1-fb65851c8e8b",
+          "f7f10ac0-301d-5a6a-a9a0-8269489531b0"
+        ]
+      },
+      {
+        "id": "68e6aa78-dc3a-54e7-95f7-f937c39265c8",
+        "source": "synthetic-load-balancer-export",
+        "source_type": "load_balancer_config",
+        "assertion": "Storefront load balancer forwards requests to web-01.",
+        "collected_at": "2026-01-13T12:00:00Z",
+        "freshness_ttl_seconds": 2592000,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "lb-storefront-pool",
+        "supports_relationship_ids": [
+          "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "7099572b-c3ba-59d5-8eb3-4ea71bd1e9ea",
+        "source": "synthetic-secret-scan",
+        "source_type": "secret_scan",
+        "assertion": "Secret scanning flags a svc-deploy token committed to the deploy repo.",
+        "collected_at": "2026-01-11T12:00:00Z",
+        "freshness_ttl_seconds": 2592000,
+        "recorded_confidence": "MEDIUM",
+        "confidence_at_evaluation": "MEDIUM",
+        "record": "secret-scan-finding-0042",
+        "supports_relationship_ids": [
+          "54665505-2ce1-5f1d-b5f5-60f6c9cd7a85"
+        ],
+        "supports_finding_ids": [
+          "6f8da14a-3639-5606-90cb-53aa97518d3d"
+        ]
+      },
+      {
+        "id": "769335d0-56d1-5d3c-9957-a2eae9bcccdf",
+        "source": "synthetic-vpn-export",
+        "source_type": "vpn_config",
+        "assertion": "VPN profile routes authenticated clients into corp-lan.",
+        "collected_at": "2026-01-13T12:00:00Z",
+        "freshness_ttl_seconds": 2592000,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "vpn-profile-engineering",
+        "supports_relationship_ids": [
+          "9f9c5bec-467f-5515-a65b-a8fb701d31a7"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "8f66e7b2-9403-5236-b584-81a0f3fa7ade",
+        "source": "synthetic-directory-export",
+        "source_type": "directory_membership",
+        "assertion": "Directory export lists alice as a member of db-admins.",
+        "collected_at": "2026-01-14T12:00:00Z",
+        "freshness_ttl_seconds": 1209600,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "directory-groups-2026-01-14",
+        "supports_relationship_ids": [
+          "8b6484af-4b99-5e4b-b4dc-dccf91577bc7"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "9647696a-cc71-5131-ad34-fa83fb2fea30",
+        "source": "synthetic-endpoint-telemetry",
+        "source_type": "endpoint_session",
+        "assertion": "Endpoint telemetry shows alice logged in on laptop-dev-07.",
+        "collected_at": "2025-12-26T12:00:00Z",
+        "freshness_ttl_seconds": 604800,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "MEDIUM",
+        "record": "edr-session-snapshot-2025-12-26",
+        "supports_relationship_ids": [
+          "24ef3f8c-e4b3-561d-8dd7-b537d9ca68de"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "ab5f0f53-2f62-5d42-b414-9c7a8c04edef",
+        "source": "synthetic-firewall-export",
+        "source_type": "firewall_config",
+        "assertion": "Perimeter rules allow inbound HTTPS to the storefront and VPN gateway.",
+        "collected_at": "2026-01-13T12:00:00Z",
+        "freshness_ttl_seconds": 2592000,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "fw-perimeter-ruleset-2026-01-13",
+        "supports_relationship_ids": [
+          "4a9ef885-c39d-5095-86d2-374ad45c2965",
+          "4bdd67f3-8d1b-5772-b769-13f8e423937f"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "ad385611-5abc-5134-910e-42a8a6e311d9",
+        "source": "synthetic-cluster-inventory",
+        "source_type": "workload_manifest",
+        "assertion": "Storefront workload runs under the svc-storefront identity.",
+        "collected_at": "2026-01-14T12:00:00Z",
+        "freshness_ttl_seconds": 1209600,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "deployment/storefront",
+        "supports_relationship_ids": [
+          "96f62c4f-b015-5bb6-a0df-bee1efeb57d3"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "b0c44be1-e809-5e64-9024-487e6fe8fbdc",
+        "source": "synthetic-config-scan",
+        "source_type": "application_config",
+        "assertion": "Payments API configuration declares its dependency on customer-db.",
+        "collected_at": "2026-01-12T12:00:00Z",
+        "freshness_ttl_seconds": 2592000,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "payments-api/config.yaml",
+        "supports_relationship_ids": [
+          "116945da-aa3b-5589-b27e-e9a63cd87e0f"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "b7bfd064-e942-5e2e-bfac-9ff39e5f275a",
+        "source": "synthetic-flow-logs",
+        "source_type": "network_flow",
+        "assertion": "Flow logs show web-01 and the storefront identity calling the payments API.",
+        "collected_at": "2026-01-15T06:00:00Z",
+        "freshness_ttl_seconds": 259200,
+        "recorded_confidence": "MEDIUM",
+        "confidence_at_evaluation": "MEDIUM",
+        "record": "flows-payments-api-24h",
+        "supports_relationship_ids": [
+          "03d90d9a-e961-55f6-928b-40dcc0bc99c0",
+          "8b9ed93f-9434-5d13-a9c9-ba2c44a3ddd6"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "c54280e3-a319-597c-bc4b-fae98524492e",
+        "source": "synthetic-ssh-config-audit",
+        "source_type": "ssh_config",
+        "assertion": "Earlier audit: SSH key for the CI runner not found on the jump host.",
+        "collected_at": "2025-12-06T12:00:00Z",
+        "freshness_ttl_seconds": 7776000,
+        "recorded_confidence": "LOW",
+        "confidence_at_evaluation": "LOW",
+        "record": "ssh-audit-2025-12-06",
+        "supports_relationship_ids": [
+          "9d192c70-0e19-5d08-9480-ca2bfe8aacef"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "d11d5533-b933-5361-b81c-1c83e2ea4980",
+        "source": "synthetic-database-grants-export",
+        "source_type": "database_grants",
+        "assertion": "Database grants: prod-db-admin and db-admins hold administrative rights.",
+        "collected_at": "2026-01-14T12:00:00Z",
+        "freshness_ttl_seconds": 1209600,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "customer-db-grants-2026-01-14",
+        "supports_relationship_ids": [
+          "449942b7-9c56-5712-9e8c-95800805bcb3",
+          "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "d12f6d49-4ee8-59c2-aa8b-9b1459d3ca65",
+        "source": "synthetic-endpoint-telemetry",
+        "source_type": "credential_inventory",
+        "assertion": "laptop-dev-07 caches a git credential with write access to the deploy repo.",
+        "collected_at": "2026-01-13T12:00:00Z",
+        "freshness_ttl_seconds": 1209600,
+        "recorded_confidence": "MEDIUM",
+        "confidence_at_evaluation": "MEDIUM",
+        "record": "credential-inventory-laptop-dev-07",
+        "supports_relationship_ids": [
+          "ef665128-14a3-57ab-9bcf-e2e14a0250ce"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "d60b7637-03d1-5284-9efd-723039ace1a4",
+        "source": "synthetic-ssh-config-audit",
+        "source_type": "ssh_config",
+        "assertion": "Current audit: jump host holds an authorised SSH key for the CI runner.",
+        "collected_at": "2026-01-12T12:00:00Z",
+        "freshness_ttl_seconds": 7776000,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "ssh-audit-2026-01-12",
+        "supports_relationship_ids": [
+          "9d192c70-0e19-5d08-9480-ca2bfe8aacef"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "d70d65f6-f271-5728-acf7-e1483a6d0469",
+        "source": "synthetic-firewall-export",
+        "source_type": "firewall_config",
+        "assertion": "Internal rules allow web-01 into corp-lan, and corp-lan to reach the jump host, laptops and CI runner.",
+        "collected_at": "2026-01-13T12:00:00Z",
+        "freshness_ttl_seconds": 2592000,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "fw-internal-ruleset-2026-01-13",
+        "supports_relationship_ids": [
+          "111b26c6-5aba-5a54-8425-931ab82c7077",
+          "36d371cf-cadd-541b-898e-d04ed319bd16",
+          "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+          "dd75166b-f04b-5133-88b9-7b6de2ffa1cc"
+        ],
+        "supports_finding_ids": []
+      },
+      {
+        "id": "fa89414a-1499-5d21-988c-de207751308d",
+        "source": "synthetic-ci-inventory",
+        "source_type": "ci_config",
+        "assertion": "CI runner executes deployment jobs as svc-deploy.",
+        "collected_at": "2026-01-14T12:00:00Z",
+        "freshness_ttl_seconds": 1209600,
+        "recorded_confidence": "HIGH",
+        "confidence_at_evaluation": "HIGH",
+        "record": "ci/runner-01.toml",
+        "supports_relationship_ids": [
+          "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d"
+        ],
+        "supports_finding_ids": []
+      }
+    ],
+    "findings": [
+      {
+        "id": "1dda7963-c85f-526c-ab4f-2b70d817151a",
+        "entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+        "title": "Database audit logging disabled",
+        "severity": "LOW",
+        "description": "Synthetic finding: administrative actions on customer-db are not audited.",
+        "supporting_evidence_ids": [
+          "5d5a7d83-2705-5605-b43f-7d2bef7bbdf3"
+        ]
+      },
+      {
+        "id": "2fdc299f-0fc1-5f2d-aec6-881bfd8bdd7b",
+        "entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+        "title": "Password authentication enabled for SSH",
+        "severity": "HIGH",
+        "description": "Synthetic finding: the jump host accepts password logins.",
+        "supporting_evidence_ids": [
+          "5d5a7d83-2705-5605-b43f-7d2bef7bbdf3"
+        ]
+      },
+      {
+        "id": "6f8da14a-3639-5606-90cb-53aa97518d3d",
+        "entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+        "title": "Long-lived deployment token on runner",
+        "severity": "HIGH",
+        "description": "Synthetic finding: the runner caches a non-expiring svc-deploy token.",
+        "supporting_evidence_ids": [
+          "7099572b-c3ba-59d5-8eb3-4ea71bd1e9ea"
+        ]
+      },
+      {
+        "id": "c865053c-dca3-5c6a-a7c1-fb65851c8e8b",
+        "entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+        "title": "Legacy TLS protocol versions enabled",
+        "severity": "MEDIUM",
+        "description": "Synthetic finding: the storefront still negotiates deprecated TLS versions.",
+        "supporting_evidence_ids": [
+          "5d5a7d83-2705-5605-b43f-7d2bef7bbdf3"
+        ]
+      },
+      {
+        "id": "f7f10ac0-301d-5a6a-a9a0-8269489531b0",
+        "entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+        "title": "Application server missing security updates",
+        "severity": "HIGH",
+        "description": "Synthetic finding: web-01 runs an application server release with published security fixes outstanding.",
+        "supporting_evidence_ids": [
+          "5d5a7d83-2705-5605-b43f-7d2bef7bbdf3"
+        ]
+      }
+    ]
+  },
+  "projection": {
+    "entity_count": 16,
+    "relationship_count": 22,
+    "all_canonical_records_projected": true
+  },
+  "baseline": {
+    "termination_reason": "EXHAUSTED",
+    "is_saturated": false,
+    "path_count": 11,
+    "environment_risk": 0.9999998329638262,
+    "max_path_risk": 0.8820290528651165,
+    "paths": [
+      {
+        "path_id": "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+        "node_ids": [
+          "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "92a65255-ab96-5807-8490-1472d73b1c85",
+          "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+          "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+          "872ee807-428c-5a4b-a181-63359fb74bb0",
+          "191356a6-e315-5696-8535-26a3fc8a42e4",
+          "2617b01e-05b5-5215-a3f4-773014c87b7b"
+        ],
+        "relationship_ids": [
+          "4a9ef885-c39d-5095-86d2-374ad45c2965",
+          "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+          "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+          "ef665128-14a3-57ab-9bcf-e2e14a0250ce",
+          "54665505-2ce1-5f1d-b5f5-60f6c9cd7a85",
+          "038ef80a-2611-5044-8284-6b43aa428b12",
+          "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+        ],
+        "hop_count": 7,
+        "steps": [
+          {
+            "relationship_id": "4a9ef885-c39d-5095-86d2-374ad45c2965",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+            "to_entity_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+            ]
+          },
+          {
+            "relationship_id": "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+            "to_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-vpn-export",
+            "evidence_ids": [
+              "769335d0-56d1-5d3c-9957-a2eae9bcccdf"
+            ]
+          },
+          {
+            "relationship_id": "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "to_entity_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "ef665128-14a3-57ab-9bcf-e2e14a0250ce",
+            "relationship_type": "CAN_AUTHENTICATE_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+            "to_entity_id": "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+            "resolved_confidence": "MEDIUM",
+            "resolved_source": "synthetic-endpoint-telemetry",
+            "evidence_ids": [
+              "d12f6d49-4ee8-59c2-aa8b-9b1459d3ca65"
+            ]
+          },
+          {
+            "relationship_id": "54665505-2ce1-5f1d-b5f5-60f6c9cd7a85",
+            "relationship_type": "STORES",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+            "to_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "resolved_confidence": "MEDIUM",
+            "resolved_source": "synthetic-secret-scan",
+            "evidence_ids": [
+              "7099572b-c3ba-59d5-8eb3-4ea71bd1e9ea"
+            ]
+          },
+          {
+            "relationship_id": "038ef80a-2611-5044-8284-6b43aa428b12",
+            "relationship_type": "CAN_ASSUME",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "to_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-iam-export",
+            "evidence_ids": [
+              "17a74de3-f94c-53ec-9471-09974c9428de"
+            ]
+          },
+          {
+            "relationship_id": "7a317a64-ba2b-57a6-992e-717aba7ab0df",
+            "relationship_type": "HAS_PERMISSION_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "to_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-database-grants-export",
+            "evidence_ids": [
+              "d11d5533-b933-5361-b81c-1c83e2ea4980"
+            ]
+          }
+        ],
+        "risk": {
+          "formula_version": "risk-v1",
+          "path": {
+            "node_ids": [
+              "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+              "92a65255-ab96-5807-8490-1472d73b1c85",
+              "d563899c-a3cc-536a-9cfe-c78bade03940",
+              "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+              "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+              "872ee807-428c-5a4b-a181-63359fb74bb0",
+              "191356a6-e315-5696-8535-26a3fc8a42e4",
+              "2617b01e-05b5-5215-a3f4-773014c87b7b"
+            ],
+            "edge_ids": [
+              "4a9ef885-c39d-5095-86d2-374ad45c2965",
+              "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+              "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+              "ef665128-14a3-57ab-9bcf-e2e14a0250ce",
+              "54665505-2ce1-5f1d-b5f5-60f6c9cd7a85",
+              "038ef80a-2611-5044-8284-6b43aa428b12",
+              "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+            ]
+          },
+          "finding_ids": [
+            "1dda7963-c85f-526c-ab4f-2b70d817151a"
+          ],
+          "numeric_risk": 0.6980324616008348,
+          "category": "HIGH",
+          "target_criticality": {
+            "value": 1.0,
+            "description": "Target Criticality: CRITICAL"
+          },
+          "entry_exposure": {
+            "value": 1.0,
+            "description": "Entry Exposure: EXTERNAL"
+          },
+          "edge_enablement": {
+            "value": 0.7781757212513043,
+            "description": "Path Enablement (Geometric Mean of 7 edges)"
+          },
+          "confidence": {
+            "value": 0.8,
+            "description": "Minimum Path Confidence"
+          },
+          "finding_amplifier": {
+            "value": 0.2,
+            "description": "Finding Amplification (Max of 1 unique findings)"
+          },
+          "control_dampening": {
+            "value": 1.0,
+            "description": "Control Dampening (Not Supported)"
+          }
+        }
+      },
+      {
+        "path_id": "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+        "node_ids": [
+          "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "92a65255-ab96-5807-8490-1472d73b1c85",
+          "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+          "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+          "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+          "2617b01e-05b5-5215-a3f4-773014c87b7b"
+        ],
+        "relationship_ids": [
+          "4a9ef885-c39d-5095-86d2-374ad45c2965",
+          "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+          "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+          "24ef3f8c-e4b3-561d-8dd7-b537d9ca68de",
+          "8b6484af-4b99-5e4b-b4dc-dccf91577bc7",
+          "449942b7-9c56-5712-9e8c-95800805bcb3"
+        ],
+        "hop_count": 6,
+        "steps": [
+          {
+            "relationship_id": "4a9ef885-c39d-5095-86d2-374ad45c2965",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+            "to_entity_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+            ]
+          },
+          {
+            "relationship_id": "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+            "to_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-vpn-export",
+            "evidence_ids": [
+              "769335d0-56d1-5d3c-9957-a2eae9bcccdf"
+            ]
+          },
+          {
+            "relationship_id": "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "to_entity_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "24ef3f8c-e4b3-561d-8dd7-b537d9ca68de",
+            "relationship_type": "RUNS_AS",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+            "to_entity_id": "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+            "resolved_confidence": "MEDIUM",
+            "resolved_source": "synthetic-endpoint-telemetry",
+            "evidence_ids": [
+              "9647696a-cc71-5131-ad34-fa83fb2fea30"
+            ]
+          },
+          {
+            "relationship_id": "8b6484af-4b99-5e4b-b4dc-dccf91577bc7",
+            "relationship_type": "MEMBER_OF",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+            "to_entity_id": "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-directory-export",
+            "evidence_ids": [
+              "8f66e7b2-9403-5236-b584-81a0f3fa7ade"
+            ]
+          },
+          {
+            "relationship_id": "449942b7-9c56-5712-9e8c-95800805bcb3",
+            "relationship_type": "HAS_PERMISSION_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+            "to_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-database-grants-export",
+            "evidence_ids": [
+              "d11d5533-b933-5361-b81c-1c83e2ea4980"
+            ]
+          }
+        ],
+        "risk": {
+          "formula_version": "risk-v1",
+          "path": {
+            "node_ids": [
+              "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+              "92a65255-ab96-5807-8490-1472d73b1c85",
+              "d563899c-a3cc-536a-9cfe-c78bade03940",
+              "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+              "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+              "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+              "2617b01e-05b5-5215-a3f4-773014c87b7b"
+            ],
+            "edge_ids": [
+              "4a9ef885-c39d-5095-86d2-374ad45c2965",
+              "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+              "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+              "24ef3f8c-e4b3-561d-8dd7-b537d9ca68de",
+              "8b6484af-4b99-5e4b-b4dc-dccf91577bc7",
+              "449942b7-9c56-5712-9e8c-95800805bcb3"
+            ]
+          },
+          "finding_ids": [
+            "1dda7963-c85f-526c-ab4f-2b70d817151a"
+          ],
+          "numeric_risk": 0.6255320390066679,
+          "category": "HIGH",
+          "target_criticality": {
+            "value": 1.0,
+            "description": "Target Criticality: CRITICAL"
+          },
+          "entry_exposure": {
+            "value": 1.0,
+            "description": "Entry Exposure: EXTERNAL"
+          },
+          "edge_enablement": {
+            "value": 0.6648938109479186,
+            "description": "Path Enablement (Geometric Mean of 6 edges)"
+          },
+          "confidence": {
+            "value": 0.8,
+            "description": "Minimum Path Confidence"
+          },
+          "finding_amplifier": {
+            "value": 0.2,
+            "description": "Finding Amplification (Max of 1 unique findings)"
+          },
+          "control_dampening": {
+            "value": 1.0,
+            "description": "Control Dampening (Not Supported)"
+          }
+        }
+      },
+      {
+        "path_id": "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+        "node_ids": [
+          "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "92a65255-ab96-5807-8490-1472d73b1c85",
+          "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "96d45461-68f8-5a31-86ff-83db0fa7b357",
+          "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+          "872ee807-428c-5a4b-a181-63359fb74bb0",
+          "191356a6-e315-5696-8535-26a3fc8a42e4",
+          "2617b01e-05b5-5215-a3f4-773014c87b7b"
+        ],
+        "relationship_ids": [
+          "4a9ef885-c39d-5095-86d2-374ad45c2965",
+          "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+          "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+          "9d192c70-0e19-5d08-9480-ca2bfe8aacef",
+          "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+          "038ef80a-2611-5044-8284-6b43aa428b12",
+          "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+        ],
+        "hop_count": 7,
+        "steps": [
+          {
+            "relationship_id": "4a9ef885-c39d-5095-86d2-374ad45c2965",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+            "to_entity_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+            ]
+          },
+          {
+            "relationship_id": "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+            "to_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-vpn-export",
+            "evidence_ids": [
+              "769335d0-56d1-5d3c-9957-a2eae9bcccdf"
+            ]
+          },
+          {
+            "relationship_id": "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "to_entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "9d192c70-0e19-5d08-9480-ca2bfe8aacef",
+            "relationship_type": "CAN_AUTHENTICATE_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+            "to_entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-ssh-config-audit",
+            "evidence_ids": [
+              "c54280e3-a319-597c-bc4b-fae98524492e",
+              "d60b7637-03d1-5284-9efd-723039ace1a4"
+            ]
+          },
+          {
+            "relationship_id": "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+            "relationship_type": "RUNS_AS",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+            "to_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-ci-inventory",
+            "evidence_ids": [
+              "fa89414a-1499-5d21-988c-de207751308d"
+            ]
+          },
+          {
+            "relationship_id": "038ef80a-2611-5044-8284-6b43aa428b12",
+            "relationship_type": "CAN_ASSUME",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "to_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-iam-export",
+            "evidence_ids": [
+              "17a74de3-f94c-53ec-9471-09974c9428de"
+            ]
+          },
+          {
+            "relationship_id": "7a317a64-ba2b-57a6-992e-717aba7ab0df",
+            "relationship_type": "HAS_PERMISSION_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "to_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-database-grants-export",
+            "evidence_ids": [
+              "d11d5533-b933-5361-b81c-1c83e2ea4980"
+            ]
+          }
+        ],
+        "risk": {
+          "formula_version": "risk-v1",
+          "path": {
+            "node_ids": [
+              "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+              "92a65255-ab96-5807-8490-1472d73b1c85",
+              "d563899c-a3cc-536a-9cfe-c78bade03940",
+              "96d45461-68f8-5a31-86ff-83db0fa7b357",
+              "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+              "872ee807-428c-5a4b-a181-63359fb74bb0",
+              "191356a6-e315-5696-8535-26a3fc8a42e4",
+              "2617b01e-05b5-5215-a3f4-773014c87b7b"
+            ],
+            "edge_ids": [
+              "4a9ef885-c39d-5095-86d2-374ad45c2965",
+              "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+              "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+              "9d192c70-0e19-5d08-9480-ca2bfe8aacef",
+              "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+              "038ef80a-2611-5044-8284-6b43aa428b12",
+              "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+            ]
+          },
+          "finding_ids": [
+            "2fdc299f-0fc1-5f2d-aec6-881bfd8bdd7b",
+            "6f8da14a-3639-5606-90cb-53aa97518d3d",
+            "1dda7963-c85f-526c-ab4f-2b70d817151a"
+          ],
+          "numeric_risk": 0.8820290528651165,
+          "category": "CRITICAL",
+          "target_criticality": {
+            "value": 1.0,
+            "description": "Target Criticality: CRITICAL"
+          },
+          "entry_exposure": {
+            "value": 1.0,
+            "description": "Entry Exposure: EXTERNAL"
+          },
+          "edge_enablement": {
+            "value": 0.8033817547751941,
+            "description": "Path Enablement (Geometric Mean of 7 edges)"
+          },
+          "confidence": {
+            "value": 1.0,
+            "description": "Minimum Path Confidence"
+          },
+          "finding_amplifier": {
+            "value": 0.4,
+            "description": "Finding Amplification (Max of 3 unique findings)"
+          },
+          "control_dampening": {
+            "value": 1.0,
+            "description": "Control Dampening (Not Supported)"
+          }
+        }
+      },
+      {
+        "path_id": "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f",
+        "node_ids": [
+          "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "92a65255-ab96-5807-8490-1472d73b1c85",
+          "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "96d45461-68f8-5a31-86ff-83db0fa7b357",
+          "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+          "872ee807-428c-5a4b-a181-63359fb74bb0",
+          "191356a6-e315-5696-8535-26a3fc8a42e4",
+          "2617b01e-05b5-5215-a3f4-773014c87b7b"
+        ],
+        "relationship_ids": [
+          "4a9ef885-c39d-5095-86d2-374ad45c2965",
+          "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+          "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+          "111b26c6-5aba-5a54-8425-931ab82c7077",
+          "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+          "038ef80a-2611-5044-8284-6b43aa428b12",
+          "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+        ],
+        "hop_count": 7,
+        "steps": [
+          {
+            "relationship_id": "4a9ef885-c39d-5095-86d2-374ad45c2965",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+            "to_entity_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+            ]
+          },
+          {
+            "relationship_id": "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+            "to_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-vpn-export",
+            "evidence_ids": [
+              "769335d0-56d1-5d3c-9957-a2eae9bcccdf"
+            ]
+          },
+          {
+            "relationship_id": "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "to_entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "111b26c6-5aba-5a54-8425-931ab82c7077",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+            "to_entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+            "relationship_type": "RUNS_AS",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+            "to_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-ci-inventory",
+            "evidence_ids": [
+              "fa89414a-1499-5d21-988c-de207751308d"
+            ]
+          },
+          {
+            "relationship_id": "038ef80a-2611-5044-8284-6b43aa428b12",
+            "relationship_type": "CAN_ASSUME",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "to_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-iam-export",
+            "evidence_ids": [
+              "17a74de3-f94c-53ec-9471-09974c9428de"
+            ]
+          },
+          {
+            "relationship_id": "7a317a64-ba2b-57a6-992e-717aba7ab0df",
+            "relationship_type": "HAS_PERMISSION_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "to_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-database-grants-export",
+            "evidence_ids": [
+              "d11d5533-b933-5361-b81c-1c83e2ea4980"
+            ]
+          }
+        ],
+        "risk": {
+          "formula_version": "risk-v1",
+          "path": {
+            "node_ids": [
+              "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+              "92a65255-ab96-5807-8490-1472d73b1c85",
+              "d563899c-a3cc-536a-9cfe-c78bade03940",
+              "96d45461-68f8-5a31-86ff-83db0fa7b357",
+              "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+              "872ee807-428c-5a4b-a181-63359fb74bb0",
+              "191356a6-e315-5696-8535-26a3fc8a42e4",
+              "2617b01e-05b5-5215-a3f4-773014c87b7b"
+            ],
+            "edge_ids": [
+              "4a9ef885-c39d-5095-86d2-374ad45c2965",
+              "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+              "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+              "111b26c6-5aba-5a54-8425-931ab82c7077",
+              "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+              "038ef80a-2611-5044-8284-6b43aa428b12",
+              "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+            ]
+          },
+          "finding_ids": [
+            "2fdc299f-0fc1-5f2d-aec6-881bfd8bdd7b",
+            "6f8da14a-3639-5606-90cb-53aa97518d3d",
+            "1dda7963-c85f-526c-ab4f-2b70d817151a"
+          ],
+          "numeric_risk": 0.8481057702147303,
+          "category": "CRITICAL",
+          "target_criticality": {
+            "value": 1.0,
+            "description": "Target Criticality: CRITICAL"
+          },
+          "entry_exposure": {
+            "value": 1.0,
+            "description": "Entry Exposure: EXTERNAL"
+          },
+          "edge_enablement": {
+            "value": 0.746842950357884,
+            "description": "Path Enablement (Geometric Mean of 7 edges)"
+          },
+          "confidence": {
+            "value": 1.0,
+            "description": "Minimum Path Confidence"
+          },
+          "finding_amplifier": {
+            "value": 0.4,
+            "description": "Finding Amplification (Max of 3 unique findings)"
+          },
+          "control_dampening": {
+            "value": 1.0,
+            "description": "Control Dampening (Not Supported)"
+          }
+        }
+      },
+      {
+        "path_id": "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+        "node_ids": [
+          "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "e81bcdec-e41f-59a3-8f26-821b203df17b",
+          "25a6c953-6892-5a94-bea1-03207a9940d8",
+          "972129f4-5c64-5313-a67d-74cd4127a66a",
+          "2617b01e-05b5-5215-a3f4-773014c87b7b"
+        ],
+        "relationship_ids": [
+          "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+          "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+          "03d90d9a-e961-55f6-928b-40dcc0bc99c0",
+          "116945da-aa3b-5589-b27e-e9a63cd87e0f"
+        ],
+        "hop_count": 4,
+        "steps": [
+          {
+            "relationship_id": "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+            "to_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+            ]
+          },
+          {
+            "relationship_id": "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "to_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-load-balancer-export",
+            "evidence_ids": [
+              "68e6aa78-dc3a-54e7-95f7-f937c39265c8"
+            ]
+          },
+          {
+            "relationship_id": "03d90d9a-e961-55f6-928b-40dcc0bc99c0",
+            "relationship_type": "COMMUNICATES_WITH",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "to_entity_id": "972129f4-5c64-5313-a67d-74cd4127a66a",
+            "resolved_confidence": "MEDIUM",
+            "resolved_source": "synthetic-flow-logs",
+            "evidence_ids": [
+              "b7bfd064-e942-5e2e-bfac-9ff39e5f275a"
+            ]
+          },
+          {
+            "relationship_id": "116945da-aa3b-5589-b27e-e9a63cd87e0f",
+            "relationship_type": "DEPENDS_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "972129f4-5c64-5313-a67d-74cd4127a66a",
+            "to_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-config-scan",
+            "evidence_ids": [
+              "b0c44be1-e809-5e64-9024-487e6fe8fbdc"
+            ]
+          }
+        ],
+        "risk": {
+          "formula_version": "risk-v1",
+          "path": {
+            "node_ids": [
+              "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+              "e81bcdec-e41f-59a3-8f26-821b203df17b",
+              "25a6c953-6892-5a94-bea1-03207a9940d8",
+              "972129f4-5c64-5313-a67d-74cd4127a66a",
+              "2617b01e-05b5-5215-a3f4-773014c87b7b"
+            ],
+            "edge_ids": [
+              "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+              "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+              "03d90d9a-e961-55f6-928b-40dcc0bc99c0",
+              "116945da-aa3b-5589-b27e-e9a63cd87e0f"
+            ]
+          },
+          "finding_ids": [
+            "c865053c-dca3-5c6a-a7c1-fb65851c8e8b",
+            "f7f10ac0-301d-5a6a-a9a0-8269489531b0",
+            "1dda7963-c85f-526c-ab4f-2b70d817151a"
+          ],
+          "numeric_risk": 0.6602373770396354,
+          "category": "HIGH",
+          "target_criticality": {
+            "value": 1.0,
+            "description": "Target Criticality: CRITICAL"
+          },
+          "entry_exposure": {
+            "value": 1.0,
+            "description": "Entry Exposure: EXTERNAL"
+          },
+          "edge_enablement": {
+            "value": 0.5421612021659069,
+            "description": "Path Enablement (Geometric Mean of 4 edges)"
+          },
+          "confidence": {
+            "value": 0.8,
+            "description": "Minimum Path Confidence"
+          },
+          "finding_amplifier": {
+            "value": 0.4,
+            "description": "Finding Amplification (Max of 3 unique findings)"
+          },
+          "control_dampening": {
+            "value": 1.0,
+            "description": "Control Dampening (Not Supported)"
+          }
+        }
+      },
+      {
+        "path_id": "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+        "node_ids": [
+          "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "e81bcdec-e41f-59a3-8f26-821b203df17b",
+          "25a6c953-6892-5a94-bea1-03207a9940d8",
+          "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+          "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+          "872ee807-428c-5a4b-a181-63359fb74bb0",
+          "191356a6-e315-5696-8535-26a3fc8a42e4",
+          "2617b01e-05b5-5215-a3f4-773014c87b7b"
+        ],
+        "relationship_ids": [
+          "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+          "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+          "36d371cf-cadd-541b-898e-d04ed319bd16",
+          "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+          "ef665128-14a3-57ab-9bcf-e2e14a0250ce",
+          "54665505-2ce1-5f1d-b5f5-60f6c9cd7a85",
+          "038ef80a-2611-5044-8284-6b43aa428b12",
+          "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+        ],
+        "hop_count": 8,
+        "steps": [
+          {
+            "relationship_id": "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+            "to_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+            ]
+          },
+          {
+            "relationship_id": "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "to_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-load-balancer-export",
+            "evidence_ids": [
+              "68e6aa78-dc3a-54e7-95f7-f937c39265c8"
+            ]
+          },
+          {
+            "relationship_id": "36d371cf-cadd-541b-898e-d04ed319bd16",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "to_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "to_entity_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "ef665128-14a3-57ab-9bcf-e2e14a0250ce",
+            "relationship_type": "CAN_AUTHENTICATE_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+            "to_entity_id": "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+            "resolved_confidence": "MEDIUM",
+            "resolved_source": "synthetic-endpoint-telemetry",
+            "evidence_ids": [
+              "d12f6d49-4ee8-59c2-aa8b-9b1459d3ca65"
+            ]
+          },
+          {
+            "relationship_id": "54665505-2ce1-5f1d-b5f5-60f6c9cd7a85",
+            "relationship_type": "STORES",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+            "to_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "resolved_confidence": "MEDIUM",
+            "resolved_source": "synthetic-secret-scan",
+            "evidence_ids": [
+              "7099572b-c3ba-59d5-8eb3-4ea71bd1e9ea"
+            ]
+          },
+          {
+            "relationship_id": "038ef80a-2611-5044-8284-6b43aa428b12",
+            "relationship_type": "CAN_ASSUME",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "to_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-iam-export",
+            "evidence_ids": [
+              "17a74de3-f94c-53ec-9471-09974c9428de"
+            ]
+          },
+          {
+            "relationship_id": "7a317a64-ba2b-57a6-992e-717aba7ab0df",
+            "relationship_type": "HAS_PERMISSION_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "to_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-database-grants-export",
+            "evidence_ids": [
+              "d11d5533-b933-5361-b81c-1c83e2ea4980"
+            ]
+          }
+        ],
+        "risk": {
+          "formula_version": "risk-v1",
+          "path": {
+            "node_ids": [
+              "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+              "e81bcdec-e41f-59a3-8f26-821b203df17b",
+              "25a6c953-6892-5a94-bea1-03207a9940d8",
+              "d563899c-a3cc-536a-9cfe-c78bade03940",
+              "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+              "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+              "872ee807-428c-5a4b-a181-63359fb74bb0",
+              "191356a6-e315-5696-8535-26a3fc8a42e4",
+              "2617b01e-05b5-5215-a3f4-773014c87b7b"
+            ],
+            "edge_ids": [
+              "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+              "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+              "36d371cf-cadd-541b-898e-d04ed319bd16",
+              "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+              "ef665128-14a3-57ab-9bcf-e2e14a0250ce",
+              "54665505-2ce1-5f1d-b5f5-60f6c9cd7a85",
+              "038ef80a-2611-5044-8284-6b43aa428b12",
+              "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+            ]
+          },
+          "finding_ids": [
+            "c865053c-dca3-5c6a-a7c1-fb65851c8e8b",
+            "f7f10ac0-301d-5a6a-a9a0-8269489531b0",
+            "1dda7963-c85f-526c-ab4f-2b70d817151a"
+          ],
+          "numeric_risk": 0.7615789264166248,
+          "category": "CRITICAL",
+          "target_criticality": {
+            "value": 1.0,
+            "description": "Target Criticality: CRITICAL"
+          },
+          "entry_exposure": {
+            "value": 1.0,
+            "description": "Entry Exposure: EXTERNAL"
+          },
+          "edge_enablement": {
+            "value": 0.7532894300346351,
+            "description": "Path Enablement (Geometric Mean of 8 edges)"
+          },
+          "confidence": {
+            "value": 0.8,
+            "description": "Minimum Path Confidence"
+          },
+          "finding_amplifier": {
+            "value": 0.4,
+            "description": "Finding Amplification (Max of 3 unique findings)"
+          },
+          "control_dampening": {
+            "value": 1.0,
+            "description": "Control Dampening (Not Supported)"
+          }
+        }
+      },
+      {
+        "path_id": "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+        "node_ids": [
+          "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "e81bcdec-e41f-59a3-8f26-821b203df17b",
+          "25a6c953-6892-5a94-bea1-03207a9940d8",
+          "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+          "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+          "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+          "2617b01e-05b5-5215-a3f4-773014c87b7b"
+        ],
+        "relationship_ids": [
+          "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+          "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+          "36d371cf-cadd-541b-898e-d04ed319bd16",
+          "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+          "24ef3f8c-e4b3-561d-8dd7-b537d9ca68de",
+          "8b6484af-4b99-5e4b-b4dc-dccf91577bc7",
+          "449942b7-9c56-5712-9e8c-95800805bcb3"
+        ],
+        "hop_count": 7,
+        "steps": [
+          {
+            "relationship_id": "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+            "to_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+            ]
+          },
+          {
+            "relationship_id": "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "to_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-load-balancer-export",
+            "evidence_ids": [
+              "68e6aa78-dc3a-54e7-95f7-f937c39265c8"
+            ]
+          },
+          {
+            "relationship_id": "36d371cf-cadd-541b-898e-d04ed319bd16",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "to_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "to_entity_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "24ef3f8c-e4b3-561d-8dd7-b537d9ca68de",
+            "relationship_type": "RUNS_AS",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+            "to_entity_id": "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+            "resolved_confidence": "MEDIUM",
+            "resolved_source": "synthetic-endpoint-telemetry",
+            "evidence_ids": [
+              "9647696a-cc71-5131-ad34-fa83fb2fea30"
+            ]
+          },
+          {
+            "relationship_id": "8b6484af-4b99-5e4b-b4dc-dccf91577bc7",
+            "relationship_type": "MEMBER_OF",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+            "to_entity_id": "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-directory-export",
+            "evidence_ids": [
+              "8f66e7b2-9403-5236-b584-81a0f3fa7ade"
+            ]
+          },
+          {
+            "relationship_id": "449942b7-9c56-5712-9e8c-95800805bcb3",
+            "relationship_type": "HAS_PERMISSION_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+            "to_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-database-grants-export",
+            "evidence_ids": [
+              "d11d5533-b933-5361-b81c-1c83e2ea4980"
+            ]
+          }
+        ],
+        "risk": {
+          "formula_version": "risk-v1",
+          "path": {
+            "node_ids": [
+              "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+              "e81bcdec-e41f-59a3-8f26-821b203df17b",
+              "25a6c953-6892-5a94-bea1-03207a9940d8",
+              "d563899c-a3cc-536a-9cfe-c78bade03940",
+              "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+              "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+              "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+              "2617b01e-05b5-5215-a3f4-773014c87b7b"
+            ],
+            "edge_ids": [
+              "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+              "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+              "36d371cf-cadd-541b-898e-d04ed319bd16",
+              "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+              "24ef3f8c-e4b3-561d-8dd7-b537d9ca68de",
+              "8b6484af-4b99-5e4b-b4dc-dccf91577bc7",
+              "449942b7-9c56-5712-9e8c-95800805bcb3"
+            ]
+          },
+          "finding_ids": [
+            "c865053c-dca3-5c6a-a7c1-fb65851c8e8b",
+            "f7f10ac0-301d-5a6a-a9a0-8269489531b0",
+            "1dda7963-c85f-526c-ab4f-2b70d817151a"
+          ],
+          "numeric_risk": 0.7145009420363788,
+          "category": "HIGH",
+          "target_criticality": {
+            "value": 1.0,
+            "description": "Target Criticality: CRITICAL"
+          },
+          "entry_exposure": {
+            "value": 1.0,
+            "description": "Entry Exposure: EXTERNAL"
+          },
+          "edge_enablement": {
+            "value": 0.6552102959091224,
+            "description": "Path Enablement (Geometric Mean of 7 edges)"
+          },
+          "confidence": {
+            "value": 0.8,
+            "description": "Minimum Path Confidence"
+          },
+          "finding_amplifier": {
+            "value": 0.4,
+            "description": "Finding Amplification (Max of 3 unique findings)"
+          },
+          "control_dampening": {
+            "value": 1.0,
+            "description": "Control Dampening (Not Supported)"
+          }
+        }
+      },
+      {
+        "path_id": "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+        "node_ids": [
+          "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "e81bcdec-e41f-59a3-8f26-821b203df17b",
+          "25a6c953-6892-5a94-bea1-03207a9940d8",
+          "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "96d45461-68f8-5a31-86ff-83db0fa7b357",
+          "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+          "872ee807-428c-5a4b-a181-63359fb74bb0",
+          "191356a6-e315-5696-8535-26a3fc8a42e4",
+          "2617b01e-05b5-5215-a3f4-773014c87b7b"
+        ],
+        "relationship_ids": [
+          "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+          "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+          "36d371cf-cadd-541b-898e-d04ed319bd16",
+          "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+          "9d192c70-0e19-5d08-9480-ca2bfe8aacef",
+          "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+          "038ef80a-2611-5044-8284-6b43aa428b12",
+          "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+        ],
+        "hop_count": 8,
+        "steps": [
+          {
+            "relationship_id": "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+            "to_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+            ]
+          },
+          {
+            "relationship_id": "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "to_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-load-balancer-export",
+            "evidence_ids": [
+              "68e6aa78-dc3a-54e7-95f7-f937c39265c8"
+            ]
+          },
+          {
+            "relationship_id": "36d371cf-cadd-541b-898e-d04ed319bd16",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "to_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "to_entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "9d192c70-0e19-5d08-9480-ca2bfe8aacef",
+            "relationship_type": "CAN_AUTHENTICATE_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+            "to_entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-ssh-config-audit",
+            "evidence_ids": [
+              "c54280e3-a319-597c-bc4b-fae98524492e",
+              "d60b7637-03d1-5284-9efd-723039ace1a4"
+            ]
+          },
+          {
+            "relationship_id": "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+            "relationship_type": "RUNS_AS",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+            "to_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-ci-inventory",
+            "evidence_ids": [
+              "fa89414a-1499-5d21-988c-de207751308d"
+            ]
+          },
+          {
+            "relationship_id": "038ef80a-2611-5044-8284-6b43aa428b12",
+            "relationship_type": "CAN_ASSUME",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "to_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-iam-export",
+            "evidence_ids": [
+              "17a74de3-f94c-53ec-9471-09974c9428de"
+            ]
+          },
+          {
+            "relationship_id": "7a317a64-ba2b-57a6-992e-717aba7ab0df",
+            "relationship_type": "HAS_PERMISSION_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "to_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-database-grants-export",
+            "evidence_ids": [
+              "d11d5533-b933-5361-b81c-1c83e2ea4980"
+            ]
+          }
+        ],
+        "risk": {
+          "formula_version": "risk-v1",
+          "path": {
+            "node_ids": [
+              "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+              "e81bcdec-e41f-59a3-8f26-821b203df17b",
+              "25a6c953-6892-5a94-bea1-03207a9940d8",
+              "d563899c-a3cc-536a-9cfe-c78bade03940",
+              "96d45461-68f8-5a31-86ff-83db0fa7b357",
+              "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+              "872ee807-428c-5a4b-a181-63359fb74bb0",
+              "191356a6-e315-5696-8535-26a3fc8a42e4",
+              "2617b01e-05b5-5215-a3f4-773014c87b7b"
+            ],
+            "edge_ids": [
+              "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+              "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+              "36d371cf-cadd-541b-898e-d04ed319bd16",
+              "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+              "9d192c70-0e19-5d08-9480-ca2bfe8aacef",
+              "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+              "038ef80a-2611-5044-8284-6b43aa428b12",
+              "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+            ]
+          },
+          "finding_ids": [
+            "c865053c-dca3-5c6a-a7c1-fb65851c8e8b",
+            "f7f10ac0-301d-5a6a-a9a0-8269489531b0",
+            "2fdc299f-0fc1-5f2d-aec6-881bfd8bdd7b",
+            "6f8da14a-3639-5606-90cb-53aa97518d3d",
+            "1dda7963-c85f-526c-ab4f-2b70d817151a"
+          ],
+          "numeric_risk": 0.86475800154489,
+          "category": "CRITICAL",
+          "target_criticality": {
+            "value": 1.0,
+            "description": "Target Criticality: CRITICAL"
+          },
+          "entry_exposure": {
+            "value": 1.0,
+            "description": "Entry Exposure: EXTERNAL"
+          },
+          "edge_enablement": {
+            "value": 0.7745966692414834,
+            "description": "Path Enablement (Geometric Mean of 8 edges)"
+          },
+          "confidence": {
+            "value": 1.0,
+            "description": "Minimum Path Confidence"
+          },
+          "finding_amplifier": {
+            "value": 0.4,
+            "description": "Finding Amplification (Max of 5 unique findings)"
+          },
+          "control_dampening": {
+            "value": 1.0,
+            "description": "Control Dampening (Not Supported)"
+          }
+        }
+      },
+      {
+        "path_id": "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+        "node_ids": [
+          "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "e81bcdec-e41f-59a3-8f26-821b203df17b",
+          "25a6c953-6892-5a94-bea1-03207a9940d8",
+          "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "96d45461-68f8-5a31-86ff-83db0fa7b357",
+          "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+          "872ee807-428c-5a4b-a181-63359fb74bb0",
+          "191356a6-e315-5696-8535-26a3fc8a42e4",
+          "2617b01e-05b5-5215-a3f4-773014c87b7b"
+        ],
+        "relationship_ids": [
+          "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+          "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+          "36d371cf-cadd-541b-898e-d04ed319bd16",
+          "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+          "111b26c6-5aba-5a54-8425-931ab82c7077",
+          "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+          "038ef80a-2611-5044-8284-6b43aa428b12",
+          "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+        ],
+        "hop_count": 8,
+        "steps": [
+          {
+            "relationship_id": "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+            "to_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+            ]
+          },
+          {
+            "relationship_id": "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "to_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-load-balancer-export",
+            "evidence_ids": [
+              "68e6aa78-dc3a-54e7-95f7-f937c39265c8"
+            ]
+          },
+          {
+            "relationship_id": "36d371cf-cadd-541b-898e-d04ed319bd16",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "to_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+            "to_entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "111b26c6-5aba-5a54-8425-931ab82c7077",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+            "to_entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "d70d65f6-f271-5728-acf7-e1483a6d0469"
+            ]
+          },
+          {
+            "relationship_id": "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+            "relationship_type": "RUNS_AS",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+            "to_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-ci-inventory",
+            "evidence_ids": [
+              "fa89414a-1499-5d21-988c-de207751308d"
+            ]
+          },
+          {
+            "relationship_id": "038ef80a-2611-5044-8284-6b43aa428b12",
+            "relationship_type": "CAN_ASSUME",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "to_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-iam-export",
+            "evidence_ids": [
+              "17a74de3-f94c-53ec-9471-09974c9428de"
+            ]
+          },
+          {
+            "relationship_id": "7a317a64-ba2b-57a6-992e-717aba7ab0df",
+            "relationship_type": "HAS_PERMISSION_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "to_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-database-grants-export",
+            "evidence_ids": [
+              "d11d5533-b933-5361-b81c-1c83e2ea4980"
+            ]
+          }
+        ],
+        "risk": {
+          "formula_version": "risk-v1",
+          "path": {
+            "node_ids": [
+              "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+              "e81bcdec-e41f-59a3-8f26-821b203df17b",
+              "25a6c953-6892-5a94-bea1-03207a9940d8",
+              "d563899c-a3cc-536a-9cfe-c78bade03940",
+              "96d45461-68f8-5a31-86ff-83db0fa7b357",
+              "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+              "872ee807-428c-5a4b-a181-63359fb74bb0",
+              "191356a6-e315-5696-8535-26a3fc8a42e4",
+              "2617b01e-05b5-5215-a3f4-773014c87b7b"
+            ],
+            "edge_ids": [
+              "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+              "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+              "36d371cf-cadd-541b-898e-d04ed319bd16",
+              "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+              "111b26c6-5aba-5a54-8425-931ab82c7077",
+              "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+              "038ef80a-2611-5044-8284-6b43aa428b12",
+              "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+            ]
+          },
+          "finding_ids": [
+            "c865053c-dca3-5c6a-a7c1-fb65851c8e8b",
+            "f7f10ac0-301d-5a6a-a9a0-8269489531b0",
+            "2fdc299f-0fc1-5f2d-aec6-881bfd8bdd7b",
+            "6f8da14a-3639-5606-90cb-53aa97518d3d",
+            "1dda7963-c85f-526c-ab4f-2b70d817151a"
+          ],
+          "numeric_risk": 0.8360093291976365,
+          "category": "CRITICAL",
+          "target_criticality": {
+            "value": 1.0,
+            "description": "Target Criticality: CRITICAL"
+          },
+          "entry_exposure": {
+            "value": 1.0,
+            "description": "Entry Exposure: EXTERNAL"
+          },
+          "edge_enablement": {
+            "value": 0.7266822153293941,
+            "description": "Path Enablement (Geometric Mean of 8 edges)"
+          },
+          "confidence": {
+            "value": 1.0,
+            "description": "Minimum Path Confidence"
+          },
+          "finding_amplifier": {
+            "value": 0.4,
+            "description": "Finding Amplification (Max of 5 unique findings)"
+          },
+          "control_dampening": {
+            "value": 1.0,
+            "description": "Control Dampening (Not Supported)"
+          }
+        }
+      },
+      {
+        "path_id": "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+        "node_ids": [
+          "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "e81bcdec-e41f-59a3-8f26-821b203df17b",
+          "25a6c953-6892-5a94-bea1-03207a9940d8",
+          "872ee807-428c-5a4b-a181-63359fb74bb0",
+          "191356a6-e315-5696-8535-26a3fc8a42e4",
+          "2617b01e-05b5-5215-a3f4-773014c87b7b"
+        ],
+        "relationship_ids": [
+          "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+          "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+          "fd3fa767-51b8-5a5d-b51a-aedb96ccbd88",
+          "038ef80a-2611-5044-8284-6b43aa428b12",
+          "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+        ],
+        "hop_count": 5,
+        "steps": [
+          {
+            "relationship_id": "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+            "to_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+            ]
+          },
+          {
+            "relationship_id": "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "to_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-load-balancer-export",
+            "evidence_ids": [
+              "68e6aa78-dc3a-54e7-95f7-f937c39265c8"
+            ]
+          },
+          {
+            "relationship_id": "fd3fa767-51b8-5a5d-b51a-aedb96ccbd88",
+            "relationship_type": "RUNS_AS",
+            "truth_tier": "INFERRED",
+            "from_entity_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+            "to_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "resolved_confidence": "UNKNOWN",
+            "resolved_source": "inference:fd3fa767-51b8-5a5d-b51a-aedb96ccbd88",
+            "evidence_ids": []
+          },
+          {
+            "relationship_id": "038ef80a-2611-5044-8284-6b43aa428b12",
+            "relationship_type": "CAN_ASSUME",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+            "to_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-iam-export",
+            "evidence_ids": [
+              "17a74de3-f94c-53ec-9471-09974c9428de"
+            ]
+          },
+          {
+            "relationship_id": "7a317a64-ba2b-57a6-992e-717aba7ab0df",
+            "relationship_type": "HAS_PERMISSION_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+            "to_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-database-grants-export",
+            "evidence_ids": [
+              "d11d5533-b933-5361-b81c-1c83e2ea4980"
+            ]
+          }
+        ],
+        "risk": {
+          "formula_version": "risk-v1",
+          "path": {
+            "node_ids": [
+              "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+              "e81bcdec-e41f-59a3-8f26-821b203df17b",
+              "25a6c953-6892-5a94-bea1-03207a9940d8",
+              "872ee807-428c-5a4b-a181-63359fb74bb0",
+              "191356a6-e315-5696-8535-26a3fc8a42e4",
+              "2617b01e-05b5-5215-a3f4-773014c87b7b"
+            ],
+            "edge_ids": [
+              "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+              "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+              "fd3fa767-51b8-5a5d-b51a-aedb96ccbd88",
+              "038ef80a-2611-5044-8284-6b43aa428b12",
+              "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+            ]
+          },
+          "finding_ids": [
+            "c865053c-dca3-5c6a-a7c1-fb65851c8e8b",
+            "f7f10ac0-301d-5a6a-a9a0-8269489531b0",
+            "1dda7963-c85f-526c-ab4f-2b70d817151a"
+          ],
+          "numeric_risk": 0.4782585385221686,
+          "category": "MEDIUM",
+          "target_criticality": {
+            "value": 1.0,
+            "description": "Target Criticality: CRITICAL"
+          },
+          "entry_exposure": {
+            "value": 1.0,
+            "description": "Entry Exposure: EXTERNAL"
+          },
+          "edge_enablement": {
+            "value": 0.8151931096059227,
+            "description": "Path Enablement (Geometric Mean of 5 edges)"
+          },
+          "confidence": {
+            "value": 0.16000000000000003,
+            "description": "Minimum Path Confidence"
+          },
+          "finding_amplifier": {
+            "value": 0.4,
+            "description": "Finding Amplification (Max of 3 unique findings)"
+          },
+          "control_dampening": {
+            "value": 1.0,
+            "description": "Control Dampening (Not Supported)"
+          }
+        }
+      },
+      {
+        "path_id": "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+        "node_ids": [
+          "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "e81bcdec-e41f-59a3-8f26-821b203df17b",
+          "8ef69904-f8f2-54fd-b34c-5c961d782df2",
+          "972129f4-5c64-5313-a67d-74cd4127a66a",
+          "2617b01e-05b5-5215-a3f4-773014c87b7b"
+        ],
+        "relationship_ids": [
+          "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+          "96f62c4f-b015-5bb6-a0df-bee1efeb57d3",
+          "8b9ed93f-9434-5d13-a9c9-ba2c44a3ddd6",
+          "116945da-aa3b-5589-b27e-e9a63cd87e0f"
+        ],
+        "hop_count": 4,
+        "steps": [
+          {
+            "relationship_id": "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+            "relationship_type": "ROUTES_TO",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+            "to_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-firewall-export",
+            "evidence_ids": [
+              "ab5f0f53-2f62-5d42-b414-9c7a8c04edef"
+            ]
+          },
+          {
+            "relationship_id": "96f62c4f-b015-5bb6-a0df-bee1efeb57d3",
+            "relationship_type": "RUNS_AS",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+            "to_entity_id": "8ef69904-f8f2-54fd-b34c-5c961d782df2",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-cluster-inventory",
+            "evidence_ids": [
+              "ad385611-5abc-5134-910e-42a8a6e311d9"
+            ]
+          },
+          {
+            "relationship_id": "8b9ed93f-9434-5d13-a9c9-ba2c44a3ddd6",
+            "relationship_type": "HAS_PERMISSION_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "8ef69904-f8f2-54fd-b34c-5c961d782df2",
+            "to_entity_id": "972129f4-5c64-5313-a67d-74cd4127a66a",
+            "resolved_confidence": "MEDIUM",
+            "resolved_source": "synthetic-flow-logs",
+            "evidence_ids": [
+              "17a74de3-f94c-53ec-9471-09974c9428de",
+              "b7bfd064-e942-5e2e-bfac-9ff39e5f275a"
+            ]
+          },
+          {
+            "relationship_id": "116945da-aa3b-5589-b27e-e9a63cd87e0f",
+            "relationship_type": "DEPENDS_ON",
+            "truth_tier": "OBSERVED",
+            "from_entity_id": "972129f4-5c64-5313-a67d-74cd4127a66a",
+            "to_entity_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+            "resolved_confidence": "HIGH",
+            "resolved_source": "synthetic-config-scan",
+            "evidence_ids": [
+              "b0c44be1-e809-5e64-9024-487e6fe8fbdc"
+            ]
+          }
+        ],
+        "risk": {
+          "formula_version": "risk-v1",
+          "path": {
+            "node_ids": [
+              "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+              "e81bcdec-e41f-59a3-8f26-821b203df17b",
+              "8ef69904-f8f2-54fd-b34c-5c961d782df2",
+              "972129f4-5c64-5313-a67d-74cd4127a66a",
+              "2617b01e-05b5-5215-a3f4-773014c87b7b"
+            ],
+            "edge_ids": [
+              "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+              "96f62c4f-b015-5bb6-a0df-bee1efeb57d3",
+              "8b9ed93f-9434-5d13-a9c9-ba2c44a3ddd6",
+              "116945da-aa3b-5589-b27e-e9a63cd87e0f"
+            ]
+          },
+          "finding_ids": [
+            "c865053c-dca3-5c6a-a7c1-fb65851c8e8b",
+            "1dda7963-c85f-526c-ab4f-2b70d817151a"
+          ],
+          "numeric_risk": 0.6919591772970254,
+          "category": "HIGH",
+          "target_criticality": {
+            "value": 1.0,
+            "description": "Target Criticality: CRITICAL"
+          },
+          "entry_exposure": {
+            "value": 1.0,
+            "description": "Entry Exposure: EXTERNAL"
+          },
+          "edge_enablement": {
+            "value": 0.6999271023161167,
+            "description": "Path Enablement (Geometric Mean of 4 edges)"
+          },
+          "confidence": {
+            "value": 0.8,
+            "description": "Minimum Path Confidence"
+          },
+          "finding_amplifier": {
+            "value": 0.3,
+            "description": "Finding Amplification (Max of 2 unique findings)"
+          },
+          "control_dampening": {
+            "value": 1.0,
+            "description": "Control Dampening (Not Supported)"
+          }
+        }
+      }
+    ]
+  },
+  "remediation": {
+    "candidate_relationship_ids": [
+      "038ef80a-2611-5044-8284-6b43aa428b12",
+      "03d90d9a-e961-55f6-928b-40dcc0bc99c0",
+      "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+      "111b26c6-5aba-5a54-8425-931ab82c7077",
+      "116945da-aa3b-5589-b27e-e9a63cd87e0f",
+      "24ef3f8c-e4b3-561d-8dd7-b537d9ca68de",
+      "36d371cf-cadd-541b-898e-d04ed319bd16",
+      "449942b7-9c56-5712-9e8c-95800805bcb3",
+      "4a9ef885-c39d-5095-86d2-374ad45c2965",
+      "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+      "54665505-2ce1-5f1d-b5f5-60f6c9cd7a85",
+      "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+      "7a317a64-ba2b-57a6-992e-717aba7ab0df",
+      "8b6484af-4b99-5e4b-b4dc-dccf91577bc7",
+      "8b9ed93f-9434-5d13-a9c9-ba2c44a3ddd6",
+      "96f62c4f-b015-5bb6-a0df-bee1efeb57d3",
+      "9d192c70-0e19-5d08-9480-ca2bfe8aacef",
+      "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+      "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+      "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+      "ef665128-14a3-57ab-9bcf-e2e14a0250ce",
+      "fd3fa767-51b8-5a5d-b51a-aedb96ccbd88"
+    ],
+    "ranking": {
+      "aggregation_policy_version": "env-risk-v1",
+      "ranking_policy_version": "remediation-ranking-v1",
+      "analysis_policy_fingerprint": "74b28bf025e5c693f6743715649fae203ddd6892c6499b46ad66feb4ba5ed5d5",
+      "provenance": {
+        "policy_version": "analysis-policy-v2",
+        "policy_fingerprint": "74b28bf025e5c693f6743715649fae203ddd6892c6499b46ad66feb4ba5ed5d5",
+        "evaluation_time": "2026-01-15T12:00:00Z",
+        "scope_id": "08f35593-3ef8-5c08-8aaf-c61a7582f3f8",
+        "scope_definition_version": 1
+      },
+      "baseline_is_saturated": false,
+      "baseline_termination_reason": "EXHAUSTED",
+      "is_saturated": false,
+      "persistence_authoritative": true,
+      "non_authoritative_reasons": [],
+      "baseline_environment_risk": 0.9999998329638262,
+      "baseline_path_count": 11,
+      "candidates": [
+        {
+          "target_relationship_id": "038ef80a-2611-5044-8284-6b43aa428b12",
+          "target_source_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+          "target_target_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+          "target_relationship_type": "CAN_ASSUME",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9888106921970885,
+          "risk_reduction": 0.011189140766737715,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 4,
+          "removed_path_ids": [
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "7a317a64-ba2b-57a6-992e-717aba7ab0df",
+          "target_source_id": "191356a6-e315-5696-8535-26a3fc8a42e4",
+          "target_target_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+          "target_relationship_type": "HAS_PERMISSION_ON",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9888106921970885,
+          "risk_reduction": 0.011189140766737715,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 4,
+          "removed_path_ids": [
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "4bdd67f3-8d1b-5772-b769-13f8e423937f",
+          "target_source_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "target_target_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+          "target_relationship_type": "ROUTES_TO",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9979737582162325,
+          "risk_reduction": 0.0020260747475937535,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 4,
+          "removed_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30"
+          ],
+          "remaining_path_ids": [
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "0c15374c-4b84-5dbf-bc0e-df16b4a6d6b0",
+          "target_source_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+          "target_target_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+          "target_relationship_type": "ROUTES_TO",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9993758348139331,
+          "risk_reduction": 0.0006239981498931124,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 5,
+          "removed_path_ids": [
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "a4fbbbc7-6d25-5bdb-88fa-7eab26e0e10d",
+          "target_source_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+          "target_target_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+          "target_relationship_type": "RUNS_AS",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9995796960522728,
+          "risk_reduction": 0.0004201369115534037,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 7,
+          "removed_path_ids": [
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "dd75166b-f04b-5133-88b9-7b6de2ffa1cc",
+          "target_source_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "target_target_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+          "target_relationship_type": "ROUTES_TO",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9995796960522728,
+          "risk_reduction": 0.0004201369115534037,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 7,
+          "removed_path_ids": [
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "36d371cf-cadd-541b-898e-d04ed319bd16",
+          "target_source_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+          "target_target_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "target_relationship_type": "ROUTES_TO",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.999889355331341,
+          "risk_reduction": 0.00011047763248517306,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 7,
+          "removed_path_ids": [
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "4a9ef885-c39d-5095-86d2-374ad45c2965",
+          "target_source_id": "7ecaf3f1-d84c-5727-9518-6a7863e0f7a4",
+          "target_target_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+          "target_relationship_type": "ROUTES_TO",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999175635527955,
+          "risk_reduction": 0.00008226941103073315,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 7,
+          "removed_path_ids": [
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "9f9c5bec-467f-5515-a65b-a8fb701d31a7",
+          "target_source_id": "92a65255-ab96-5807-8490-1472d73b1c85",
+          "target_target_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "target_relationship_type": "ROUTES_TO",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999175635527955,
+          "risk_reduction": 0.00008226941103073315,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 7,
+          "removed_path_ids": [
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "6cec7935-8bb1-5499-99eb-0dc39297f67d",
+          "target_source_id": "d563899c-a3cc-536a-9cfe-c78bade03940",
+          "target_target_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+          "target_relationship_type": "ROUTES_TO",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999782986730539,
+          "risk_reduction": 0.00002153429077234037,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 7,
+          "removed_path_ids": [
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "9d192c70-0e19-5d08-9480-ca2bfe8aacef",
+          "target_source_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+          "target_target_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+          "target_relationship_type": "CAN_AUTHENTICATE_TO",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999895305495081,
+          "risk_reduction": 0.00001030241431809742,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 9,
+          "removed_path_ids": [
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "111b26c6-5aba-5a54-8425-931ab82c7077",
+          "target_source_id": "96d45461-68f8-5a31-86ff-83db0fa7b357",
+          "target_target_id": "2b46e97a-8a08-50f7-abcc-b7c3686cb7ed",
+          "target_relationship_type": "ROUTES_TO",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999932942074344,
+          "risk_reduction": 6.538756391782918e-6,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 9,
+          "removed_path_ids": [
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "54665505-2ce1-5f1d-b5f5-60f6c9cd7a85",
+          "target_source_id": "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+          "target_target_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+          "target_relationship_type": "STORES",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999976799057086,
+          "risk_reduction": 2.1530581175710495e-6,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 9,
+          "removed_path_ids": [
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "ef665128-14a3-57ab-9bcf-e2e14a0250ce",
+          "target_source_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+          "target_target_id": "bded4b8a-33ef-53ea-a9ec-81e2cc35e8a6",
+          "target_relationship_type": "CAN_AUTHENTICATE_TO",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999976799057086,
+          "risk_reduction": 2.1530581175710495e-6,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 9,
+          "removed_path_ids": [
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "116945da-aa3b-5589-b27e-e9a63cd87e0f",
+          "target_source_id": "972129f4-5c64-5313-a67d-74cd4127a66a",
+          "target_target_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+          "target_relationship_type": "DEPENDS_ON",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999984040228909,
+          "risk_reduction": 1.4289409353551719e-6,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 9,
+          "removed_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec"
+          ],
+          "remaining_path_ids": [
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "24ef3f8c-e4b3-561d-8dd7-b537d9ca68de",
+          "target_source_id": "4f37d53f-51a1-589a-a5de-cc4f2036c7f5",
+          "target_target_id": "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+          "target_relationship_type": "RUNS_AS",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999984376037502,
+          "risk_reduction": 1.3953600760396867e-6,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 9,
+          "removed_path_ids": [
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "449942b7-9c56-5712-9e8c-95800805bcb3",
+          "target_source_id": "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+          "target_target_id": "2617b01e-05b5-5215-a3f4-773014c87b7b",
+          "target_relationship_type": "HAS_PERMISSION_ON",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999984376037502,
+          "risk_reduction": 1.3953600760396867e-6,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 9,
+          "removed_path_ids": [
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "8b6484af-4b99-5e4b-b4dc-dccf91577bc7",
+          "target_source_id": "29966f08-0ae6-5ea2-9f75-b4025d0ce132",
+          "target_target_id": "0baa7e0e-1280-5d17-8fd8-e3be30ca7f88",
+          "target_relationship_type": "MEMBER_OF",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999984376037502,
+          "risk_reduction": 1.3953600760396867e-6,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 9,
+          "removed_path_ids": [
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "8b9ed93f-9434-5d13-a9c9-ba2c44a3ddd6",
+          "target_source_id": "8ef69904-f8f2-54fd-b34c-5c961d782df2",
+          "target_target_id": "972129f4-5c64-5313-a67d-74cd4127a66a",
+          "target_relationship_type": "HAS_PERMISSION_ON",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999994577466312,
+          "risk_reduction": 3.752171949811256e-7,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 10,
+          "removed_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d"
+          ],
+          "remaining_path_ids": [
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "96f62c4f-b015-5bb6-a0df-bee1efeb57d3",
+          "target_source_id": "e81bcdec-e41f-59a3-8f26-821b203df17b",
+          "target_target_id": "8ef69904-f8f2-54fd-b34c-5c961d782df2",
+          "target_relationship_type": "RUNS_AS",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999994577466312,
+          "risk_reduction": 3.752171949811256e-7,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 10,
+          "removed_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d"
+          ],
+          "remaining_path_ids": [
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "03d90d9a-e961-55f6-928b-40dcc0bc99c0",
+          "target_source_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+          "target_target_id": "972129f4-5c64-5313-a67d-74cd4127a66a",
+          "target_relationship_type": "COMMUNICATES_WITH",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999995083738983,
+          "risk_reduction": 3.2458992793582553e-7,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 10,
+          "removed_path_ids": [
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        },
+        {
+          "target_relationship_id": "fd3fa767-51b8-5a5d-b51a-aedb96ccbd88",
+          "target_source_id": "25a6c953-6892-5a94-bea1-03207a9940d8",
+          "target_target_id": "872ee807-428c-5a4b-a181-63359fb74bb0",
+          "target_relationship_type": "RUNS_AS",
+          "baseline_environment_risk": 0.9999998329638262,
+          "counterfactual_environment_risk": 0.9999996798487639,
+          "risk_reduction": 1.531150622957611e-7,
+          "baseline_path_count": 11,
+          "counterfactual_path_count": 10,
+          "removed_path_ids": [
+            "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2"
+          ],
+          "remaining_path_ids": [
+            "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+            "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+            "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+            "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+            "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+            "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+            "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+            "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+            "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+            "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+          ],
+          "counterfactual_is_saturated": false,
+          "counterfactual_termination_reason": "EXHAUSTED",
+          "rankable": true
+        }
+      ]
+    },
+    "featured_relationship_id": "038ef80a-2611-5044-8284-6b43aa428b12",
+    "equivalent_relationship_ids": [
+      "7a317a64-ba2b-57a6-992e-717aba7ab0df"
+    ],
+    "before": {
+      "path_count": 11,
+      "environment_risk": 0.9999998329638262,
+      "max_path_risk": 0.8820290528651165,
+      "path_ids": [
+        "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+        "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+        "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+        "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+        "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+        "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+        "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+        "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e",
+        "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+        "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+        "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+      ]
+    },
+    "after": {
+      "path_count": 4,
+      "environment_risk": 0.9888106921970885,
+      "max_path_risk": 0.7145009420363788,
+      "path_ids": [
+        "127f8a8cdd533558904505d87d8b75a5adc3bd1c236e723affc6024e68c52e9d",
+        "47eb445c20a2b9ee6af8bd48f95af2574dc1e8670f62e454352b0c4d233921ec",
+        "ac02978f7c0c9bcb9ec1bb7fff1bb69c094713b7330708208f8ecb940cd4788d",
+        "d02bb77921f9ffb0878bbf9476ee8ea8db15e8f7017bb853316178e36870c41e"
+      ]
+    },
+    "removed_path_ids": [
+      "40a677fe9a01d159c0c5a19e1e836b0b019fc8c40e71bf90e20ffb32e69e57b2",
+      "88d6b547b609790e1d5128b4dfa0fa44b352878b5cb5253b737d4a3459de0ef4",
+      "8ed154a4a9a08ea998acdd3dfb1bd061bb82410c00b59f560c02717abee0fd9b",
+      "cc69d611d53f0d2351842011d585e45ed510c891eaf94b871107a79e2a88782d",
+      "d9395831f62443407d9b32710edfc7c0a33353dd16df807632dd2d4ac634f0cb",
+      "e3dca807cc049130ca4e77d7d5c49ae572d562d0d60b3e31e2d471beaa1dbd30",
+      "e899845d1b0cedbc7129f8d0a93352e8d87fd454b7ec199d9e1ec89070f5e70f"
+    ],
+    "baseline_projection_unchanged": true
+  },
+  "bound_sensitivity": {
+    "policy": {
+      "version": "analysis-policy-v2",
+      "traversal_policy_version": "traversal-policy-v1",
+      "risk_formula_version": "risk-v1",
+      "env_risk_formula_version": "env-risk-v1",
+      "decay_policy_version": "decay-policy-v1",
+      "max_hops": 8,
+      "traversal_budget": 12,
+      "max_paths": 4,
+      "allowed_edge_types": [
+        "CAN_ASSUME",
+        "CAN_AUTHENTICATE_TO",
+        "COMMUNICATES_WITH",
+        "DEPENDS_ON",
+        "EXPOSES",
+        "HAS_PERMISSION_ON",
+        "MEMBER_OF",
+        "ROUTES_TO",
+        "RUNS_AS",
+        "STORES",
+        "TRUSTS"
+      ],
+      "edge_costs": {
+        "CAN_ASSUME": 2,
+        "CAN_AUTHENTICATE_TO": 2,
+        "COMMUNICATES_WITH": 1,
+        "DEPENDS_ON": 2,
+        "EXPOSES": 1,
+        "HAS_PERMISSION_ON": 1,
+        "MEMBER_OF": 1,
+        "ROUTES_TO": 1,
+        "RUNS_AS": 1,
+        "STORES": 2,
+        "TRUSTS": 2
+      }
+    },
+    "policy_fingerprint": "444372e00f7b4ee3f75243ffadf236461819f70d93d563cec3039f04a41385f4",
+    "baseline_termination_reason": "MAX_PATHS_REACHED",
+    "baseline_is_saturated": true,
+    "baseline_path_count": 4,
+    "is_saturated": true,
+    "rankable_candidate_count": 0,
+    "candidate_count": 22,
+    "persistence_authoritative": false,
+    "non_authoritative_reasons": [
+      "BASELINE_SATURATED",
+      "COUNTERFACTUAL_SATURATED"
+    ],
+    "comparable_with_primary": false,
+    "comparability_detail": "policy fingerprints differ (max_paths 50 vs 4); the results are not comparable (ARCH-20)"
+  },
+  "persistence": {
+    "ranking_persistence_authoritative": true,
+    "ranking_non_authoritative_reasons": [],
+    "engine_status": "ENGINE_UNVERIFIABLE(missing_metadata)",
+    "engine_persistence_authorized": false,
+    "preconditions_met": false
+  }
+}

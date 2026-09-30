@@ -19,8 +19,51 @@ reasons over facts that have been imported into it.
 
 ---
 
+## See AttackGraph in action
+
+One command runs the real analytical engine end to end over a fully synthetic environment and
+writes a report ([example report](docs/showcase/report.md) ·
+[JSON result](docs/showcase/showcase.json) · [standalone HTML](docs/showcase/report.html)):
+
+```bash
+cd backend
+set -a && . ../.env && set +a    # DATABASE_URL: the local PostgreSQL from the Quick start
+python -m app.showcase
+```
+
+<p align="center">
+  <a href="docs/showcase/report.md"><img src="docs/showcase/graph.svg" width="460"
+  alt="Showcase graph: plausible paths from the Internet to a critical database, with the top-ranked remediation candidate highlighted"></a>
+</p>
+
+What it runs, using the same components as any other analysis:
+
+- **Evidence → security graph:** a fictional environment (16 entities, 22 relationships,
+  17 evidence records, 5 findings) is written through the canonical repositories, its scope is
+  resolved by exact version, and the graph is projected from PostgreSQL.
+- **Attack paths:** bounded, deterministic traversal finds **11 plausible paths** from the
+  Internet to a critical database, including parallel relationships, an inferred relationship
+  and stale evidence downgraded by decay.
+- **Risk:** every path is scored with risk-v1 (with its factor breakdown) and traced to its
+  evidence; env-risk-v1 aggregates them.
+- **Counterfactual remediation:** each relationship on a path is removed in turn from a clone of
+  the graph; the top-ranked change (a single identity permission) removes 7 of the 11 paths.
+- **Semantics:** a tighter enumeration limit shows saturation, non-comparable policy fingerprints
+  and the persistence-authority gates.
+
+It writes `showcase.json`, `report.md`, `report.html` and `graph.svg` to
+`backend/showcase-output/`. The run needs no network access, no credentials beyond
+`DATABASE_URL`, and an empty, migrated database; everything is loaded inside a transaction that
+is always rolled back, so nothing is persisted. Repeated runs produce byte-identical output
+(only the engine-identity section depends on where the run happens). It demonstrates the
+engine, not anything about a real environment: see
+[the showcase notes](docs/showcase/README.md) for what it does and does not show.
+
+---
+
 ## Contents
 
+- [See AttackGraph in action](#see-attackgraph-in-action)
 - [Core model](#core-model)
 - [Canonical truth vs. derived analysis](#canonical-truth-vs-derived-analysis)
 - [Architecture](#architecture)
@@ -212,6 +255,7 @@ unprivileged user, and generates read-only engine metadata at build time (see
 | [Definition of done](docs/engineering/DEFINITION_OF_DONE.md) | The gate every change must pass |
 | [AI engineering playbook](docs/engineering/AI_ENGINEERING_PLAYBOOK.md) | Workflow for AI coding agents |
 | [Identity and time](backend/docs/identity_and_time.md) | Path identity, evidence supersession, evaluation time |
+| [Showcase](docs/showcase/README.md) | The end-to-end demonstration, its example output and how to regenerate it |
 | [Changelog](CHANGELOG.md) | Notable changes |
 
 ## Project status

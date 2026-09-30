@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="1134" viewBox="0 0 820 1134" font-family="Helvetica, Arial, sans-serif" role="img" aria-labelledby="ag-title ag-desc">
+<title id="ag-title">AttackGraph showcase: synthetic environment graph</title>
+<desc id="ag-desc">16 entities and 22 relationships; 11 plausible paths from the analysis source to the critical asset under the showcase policy.</desc>
+<defs>
+<marker id="arrow-path" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker>
+<marker id="arrow-off" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#cbd5e1"/></marker>
+<marker id="arrow-fix" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+</defs>
+<rect x="0" y="0" width="820" height="1134" fill="#ffffff"/>
+<text x="24" y="30" font-size="17" font-weight="700" fill="#0f172a">AttackGraph showcase — Example Corp (synthetic)</text>
+<text x="24" y="50" font-size="12" fill="#475569">11 plausible paths from Internet to customer-db.corp.example.test · bounded traversal EXHAUSTED</text>
+<path d="M648,336 C648,368 410,368 410,400" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>web-01.corp.example.test COMMUNICATES_WITH payments-api.corp.example.test (observed, medium confidence)</title></path>
+<path d="M410,226 C410,258 648,258 648,290" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>storefront.example.test ROUTES_TO web-01.corp.example.test (observed, high confidence)</title></path>
+<path d="M454,556 C430,588 289,588 313,620" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>jump-01.corp.example.test ROUTES_TO ci-runner-01.corp.example.test (observed, high confidence)</title></path>
+<path d="M410,446 C410,478 172,478 172,510 L172,556 C172,588 31,588 31,620 L31,666 C31,698 31,698 31,730 L31,776 C31,808 31,808 31,840 L31,886 C31,918 372,918 372,950" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>payments-api.corp.example.test DEPENDS_ON customer-db.corp.example.test (observed, high confidence)</title></path>
+<path d="M692,556 C692,588 551,588 551,620" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>laptop-dev-07.corp.example.test RUNS_AS alice (synthetic database engineer) (observed, medium confidence)</title></path>
+<path d="M648,336 C648,368 692,368 692,400" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>web-01.corp.example.test ROUTES_TO corp-lan (198.51.100.0/24) (observed, high confidence)</title></path>
+<path d="M662,776 C662,808 662,808 662,840 L662,886 C662,918 372,918 372,950" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>db-admins HAS_PERMISSION_ON customer-db.corp.example.test (observed, high confidence)</title></path>
+<path d="M410,116 C410,148 648,148 648,180" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>Internet ROUTES_TO vpn.example.test (observed, high confidence)</title></path>
+<path d="M410,116 C410,148 410,148 410,180" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>Internet ROUTES_TO storefront.example.test (observed, high confidence)</title></path>
+<path d="M789,666 C789,698 424,698 424,730" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>git.corp.example.test/platform/deploy STORES svc-deploy (observed, medium confidence)</title></path>
+<path d="M692,446 C692,478 692,478 692,510" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>corp-lan (198.51.100.0/24) ROUTES_TO laptop-dev-07.corp.example.test (observed, high confidence)</title></path>
+<path d="M424,886 C424,918 372,918 372,950" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>prod-db-admin HAS_PERMISSION_ON customer-db.corp.example.test (observed, high confidence)</title></path>
+<path d="M551,666 C551,698 662,698 662,730" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>alice (synthetic database engineer) MEMBER_OF db-admins (observed, high confidence)</title></path>
+<path d="M410,336 C410,368 410,368 410,400" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>svc-storefront HAS_PERMISSION_ON payments-api.corp.example.test (observed, medium confidence)</title></path>
+<path d="M410,226 C410,258 410,258 410,290" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>storefront.example.test RUNS_AS svc-storefront (observed, high confidence)</title></path>
+<path d="M454,556 C478,588 337,588 313,620" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>jump-01.corp.example.test CAN_AUTHENTICATE_TO ci-runner-01.corp.example.test (observed, high confidence)</title></path>
+<path d="M648,226 C648,258 789,258 789,290 L789,336 C789,368 692,368 692,400" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>vpn.example.test ROUTES_TO corp-lan (198.51.100.0/24) (observed, high confidence)</title></path>
+<path d="M313,666 C313,698 424,698 424,730" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>ci-runner-01.corp.example.test RUNS_AS svc-deploy (observed, high confidence)</title></path>
+<path d="M692,446 C692,478 454,478 454,510" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>corp-lan (198.51.100.0/24) ROUTES_TO jump-01.corp.example.test (observed, high confidence)</title></path>
+<path d="M692,556 C692,588 789,588 789,620" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>laptop-dev-07.corp.example.test CAN_AUTHENTICATE_TO git.corp.example.test/platform/deploy (observed, medium confidence)</title></path>
+<path d="M648,336 C648,368 551,368 551,400 L551,446 C551,478 313,478 313,510 L313,556 C313,588 172,588 172,620 L172,666 C172,698 424,698 424,730" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow-path)"><title>web-01.corp.example.test RUNS_AS svc-deploy (inferred, unknown confidence)</title></path>
+<path d="M424,776 C424,808 424,808 424,840" fill="none" stroke="#dc2626" stroke-width="3" stroke-dasharray="7 4" marker-end="url(#arrow-fix)"><title>svc-deploy CAN_ASSUME prod-db-admin (observed, high confidence)</title></path>
+<g><title>Internet — internet: external</title><rect x="306" y="70" width="208" height="46" rx="7" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/><text x="316" y="89" font-size="12" font-weight="600" fill="#0f172a">Internet</text><text x="316" y="106" font-size="10" fill="#475569">internet · external</text></g>
+<g><title>storefront.example.test — application: medium, external</title><rect x="306" y="180" width="208" height="46" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/><text x="316" y="199" font-size="12" font-weight="600" fill="#0f172a">storefront.example.test</text><text x="316" y="216" font-size="10" fill="#475569">application · medium, external</text></g>
+<g><title>vpn.example.test — host: high, external</title><rect x="544" y="180" width="208" height="46" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/><text x="554" y="199" font-size="12" font-weight="600" fill="#0f172a">vpn.example.test</text><text x="554" y="216" font-size="10" fill="#475569">host · high, external</text></g>
+<g><title>svc-storefront — service account</title><rect x="306" y="290" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="316" y="309" font-size="12" font-weight="600" fill="#0f172a">svc-storefront</text><text x="316" y="326" font-size="10" fill="#475569">service account</text></g>
+<g><title>web-01.corp.example.test — server: medium, internal</title><rect x="544" y="290" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="554" y="309" font-size="12" font-weight="600" fill="#0f172a">web-01.corp.example.test</text><text x="554" y="326" font-size="10" fill="#475569">server · medium, internal</text></g>
+<g><title>payments-api.corp.example.test — api: high, internal</title><rect x="306" y="400" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="316" y="419" font-size="12" font-weight="600" fill="#0f172a">payments-api.corp.example.t…</text><text x="316" y="436" font-size="10" fill="#475569">api · high, internal</text></g>
+<g><title>corp-lan (198.51.100.0/24) — network segment: internal</title><rect x="588" y="400" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="598" y="419" font-size="12" font-weight="600" fill="#0f172a">corp-lan (198.51.100.0/24)</text><text x="598" y="436" font-size="10" fill="#475569">network segment · internal</text></g>
+<g><title>jump-01.corp.example.test — host: high, restricted</title><rect x="350" y="510" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="360" y="529" font-size="12" font-weight="600" fill="#0f172a">jump-01.corp.example.test</text><text x="360" y="546" font-size="10" fill="#475569">host · high, restricted</text></g>
+<g><title>laptop-dev-07.corp.example.test — workstation: medium, internal</title><rect x="588" y="510" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="598" y="529" font-size="12" font-weight="600" fill="#0f172a">laptop-dev-07.corp.example.…</text><text x="598" y="546" font-size="10" fill="#475569">workstation · medium, internal</text></g>
+<g><title>ci-runner-01.corp.example.test — server: high, internal</title><rect x="209" y="620" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="219" y="639" font-size="12" font-weight="600" fill="#0f172a">ci-runner-01.corp.example.t…</text><text x="219" y="656" font-size="10" fill="#475569">server · high, internal</text></g>
+<g><title>alice (synthetic database engineer) — user</title><rect x="447" y="620" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="457" y="639" font-size="12" font-weight="600" fill="#0f172a">alice (synthetic database e…</text><text x="457" y="656" font-size="10" fill="#475569">user</text></g>
+<g><title>git.corp.example.test/platform/deploy — repository: high, internal</title><rect x="685" y="620" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="695" y="639" font-size="12" font-weight="600" fill="#0f172a">git.corp.example.test/platf…</text><text x="695" y="656" font-size="10" fill="#475569">repository · high, internal</text></g>
+<g><title>svc-deploy — service account</title><rect x="320" y="730" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="330" y="749" font-size="12" font-weight="600" fill="#0f172a">svc-deploy</text><text x="330" y="766" font-size="10" fill="#475569">service account</text></g>
+<g><title>db-admins — group</title><rect x="558" y="730" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="568" y="749" font-size="12" font-weight="600" fill="#0f172a">db-admins</text><text x="568" y="766" font-size="10" fill="#475569">group</text></g>
+<g><title>prod-db-admin — role</title><rect x="320" y="840" width="208" height="46" rx="7" fill="#f8fafc" stroke="#64748b" stroke-width="1"/><text x="330" y="859" font-size="12" font-weight="600" fill="#0f172a">prod-db-admin</text><text x="330" y="876" font-size="10" fill="#475569">role</text></g>
+<g><title>customer-db.corp.example.test — database: critical, restricted</title><rect x="268" y="950" width="208" height="46" rx="7" fill="#fee2e2" stroke="#b91c1c" stroke-width="3"/><text x="278" y="969" font-size="12" font-weight="600" fill="#0f172a">customer-db.corp.example.te…</text><text x="278" y="986" font-size="10" fill="#475569">database · critical, restricted</text></g>
+<text x="529" y="371" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">COMMUNICATES_WITH</text>
+<text x="529" y="261" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">ROUTES_TO</text>
+<text x="366" y="591" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">ROUTES_TO · CAN_AUTHENTICATE_TO</text>
+<text x="291" y="481" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">DEPENDS_ON</text>
+<text x="622" y="591" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">RUNS_AS</text>
+<text x="670" y="371" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">ROUTES_TO</text>
+<text x="662" y="811" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">HAS_PERMISSION_ON</text>
+<text x="529" y="151" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">ROUTES_TO</text>
+<text x="410" y="151" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">ROUTES_TO</text>
+<text x="606" y="701" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">STORES</text>
+<text x="692" y="481" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">ROUTES_TO</text>
+<text x="398" y="921" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">HAS_PERMISSION_ON</text>
+<text x="565" y="686" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">MEMBER_OF</text>
+<text x="410" y="371" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">HAS_PERMISSION_ON</text>
+<text x="410" y="261" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">RUNS_AS</text>
+<text x="718" y="261" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">ROUTES_TO</text>
+<text x="368" y="701" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">RUNS_AS</text>
+<text x="573" y="481" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">ROUTES_TO</text>
+<text x="740" y="591" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">CAN_AUTHENTICATE_TO</text>
+<text x="636" y="356" font-size="9" text-anchor="middle" fill="#334155" font-weight="400" paint-order="stroke" stroke="#ffffff" stroke-width="3">RUNS_AS*</text>
+<text x="424" y="811" font-size="9" text-anchor="middle" fill="#b91c1c" font-weight="700" paint-order="stroke" stroke="#ffffff" stroke-width="3">CAN_ASSUME</text>
+<line x1="24" y1="1016" x2="796" y2="1016" stroke="#e2e8f0"/>
+<rect x="24" y="1030" width="22" height="14" rx="3" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+<text x="54" y="1041" font-size="11" fill="#334155">analysis source (entry)</text>
+<rect x="410" y="1030" width="22" height="14" rx="3" fill="#fee2e2" stroke="#b91c1c" stroke-width="3"/>
+<text x="440" y="1041" font-size="11" fill="#334155">critical asset (analysis target)</text>
+<rect x="24" y="1052" width="22" height="14" rx="3" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+<text x="54" y="1063" font-size="11" fill="#334155">externally exposed entity</text>
+<line x1="410" y1="1059" x2="432" y2="1059" stroke="#334155" stroke-width="2"/>
+<text x="440" y="1063" font-size="11" fill="#334155">relationship on a plausible path</text>
+<line x1="24" y1="1081" x2="46" y2="1081" stroke="#cbd5e1" stroke-width="1"/>
+<text x="54" y="1085" font-size="11" fill="#334155">relationship not on any path</text>
+<line x1="410" y1="1081" x2="432" y2="1081" stroke="#dc2626" stroke-width="3" stroke-dasharray="7 4"/>
+<text x="440" y="1085" font-size="11" fill="#334155">top-ranked remediation candidate</text>
+<text x="24" y="1114" font-size="11" fill="#475569">* inferred relationship · remediation candidate: svc-deploy CAN_ASSUME prod-db-admin</text>
+</svg>
