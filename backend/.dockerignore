@@ -45,3 +45,6 @@ env/
 
 # Docker local overrides
 docker-compose.override.yml
+
+# Generated showcase artifacts (default output of `python -m app.showcase`)
+showcase-output/

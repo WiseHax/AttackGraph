@@ -247,7 +247,15 @@ class AnalysisProvenance(BaseModel):
 
     @field_validator("evaluation_time", mode="before")
     @classmethod
-    def _canonical_utc(cls, value: datetime) -> datetime:
+    def _canonical_utc(cls, value: datetime | str) -> datetime:
+        # A provenance record must survive its own JSON serialization (ISO 8601
+        # with an explicit offset, e.g. "2026-01-15T12:00:00Z"). The parsed
+        # value goes through the same check, so naive times are still rejected.
+        if isinstance(value, str):
+            try:
+                value = datetime.fromisoformat(value)
+            except ValueError as exc:
+                raise ValueError("evaluation_time must be an ISO 8601 datetime") from exc
         return normalize_evaluation_time(value)
 
     @model_validator(mode="after")
