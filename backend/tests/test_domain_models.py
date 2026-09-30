@@ -78,7 +78,7 @@ class TestEntityModel:
 class TestRelationshipModel:
     @pytest.mark.asyncio
     async def test_create_with_entities(self, db_session):
-        src = Entity(entity_type="APPLICATION", name="api", canonical_key=f"app:api-{uuid.uuid4()}")
+        src = Entity(entity_type="APPLICATION", name="service", canonical_key=f"app:service-{uuid.uuid4()}")
         tgt = Entity(entity_type="DATABASE", name="db", canonical_key=f"db:db-{uuid.uuid4()}")
         db_session.add_all([src, tgt])
         await db_session.flush()
