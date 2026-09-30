@@ -7,6 +7,7 @@ from typing import Iterable
 from app.graph.store import GraphStore
 from app.graph.pathfinder import TraversalEngine
 from app.analytics.context import AnalysisContext
+from app.analytics.path_analysis import build_risk_input, traversal_bounds_for_policy
 from app.analytics.risk_engine import RiskEngine
 from app.analytics.aggregator import EnvironmentRiskAggregator
 from app.schemas.analytics import (
@@ -19,7 +20,6 @@ from app.schemas.analytics import (
     EnvironmentRiskRanking,
     FindingRiskInput,
     RiskInput,
-    TraversalPolicy,
     generate_canonical_path_id,
     normalize_evaluation_time,
 )
@@ -68,52 +68,7 @@ class CounterfactualEngine:
         evaluation_time: datetime
     ) -> RiskInput:
         """Build a RiskInput from an AttackPath by fetching attributes from the store."""
-        from app.analytics.decay import resolve_edge_evidence
-
-        target_node = current_store.get_entity(path.node_ids[-1]) or {}
-        source_node = current_store.get_entity(path.node_ids[0]) or {}
-
-        edge_types = []
-        edge_confs = []
-        edge_tiers = []
-        edge_sources = []
-
-        for edge_id in path.edge_ids:
-            edge_data = current_store.get_relationship(edge_id)
-            if not edge_data:
-                # Should not happen if path is valid for this store
-                raise ValueError(f"Missing edge {edge_id} in graph store")
-
-            raw_ev = edge_data.get("raw_evidence")
-            truth_tier = edge_data["truth_tier"]
-
-            resolved_conf, resolved_source = resolve_edge_evidence(
-                raw_evidence_list=raw_ev,
-                edge_id=str(edge_id),
-                truth_tier=truth_tier,
-                evaluation_time=evaluation_time
-            )
-
-            edge_types.append(edge_data["relationship_type"])
-            edge_confs.append(resolved_conf)
-            edge_tiers.append(truth_tier)
-            edge_sources.append(resolved_source)
-
-        path_findings = []
-        for node_id in path.node_ids:
-            if node_id in self.findings_map:
-                path_findings.extend(self.findings_map[node_id])
-
-        return RiskInput(
-            path=path,
-            target_criticality=target_node.get("criticality"),
-            entry_exposure=source_node.get("exposure"),
-            edge_types=edge_types,
-            edge_confidences=edge_confs,
-            edge_truth_tiers=edge_tiers,
-            edge_sources=edge_sources,
-            findings=path_findings
-        )
+        return build_risk_input(path, current_store, self.findings_map, evaluation_time)
 
     def evaluate_candidates(
         self,
@@ -177,15 +132,11 @@ class CounterfactualEngine:
                     f"AnalysisContext defines the analysis inputs; do not also pass {explicit}"
                 )
             policy = context.policy
-            traversal_policy = TraversalPolicy(
-                version=policy.traversal_policy_version,
-                max_hops=policy.max_hops,
-                traversal_budget=policy.traversal_budget,
-                edge_costs={edge_type.value: cost for edge_type, cost in policy.edge_costs.items()},
-            )
-            traversal_max_hops = policy.max_hops
-            traversal_max_paths = policy.max_paths
-            traversal_allowed_types = {edge_type.value for edge_type in policy.allowed_edge_types}
+            bounds = traversal_bounds_for_policy(policy)
+            traversal_policy = bounds.policy
+            traversal_max_hops = bounds.max_hops
+            traversal_max_paths = bounds.max_paths
+            traversal_allowed_types = bounds.allowed_types
             risk_formula_version = policy.risk_formula_version
             evaluation_time = context.evaluation_time
             provenance = context.provenance()
